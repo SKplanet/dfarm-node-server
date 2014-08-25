@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adbfarmApp')
+angular.module('devicefarmApp')
   .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q) {
     var currentUser = {};
     if($cookieStore.get('token')) {
@@ -108,6 +108,23 @@ angular.module('adbfarmApp')
        */
       isLoggedIn: function() {
         return currentUser.hasOwnProperty('role');
+      },
+
+      /**
+       * Waits for currentUser to resolve before checking if user is logged in
+       */
+      isLoggedInAsync: function(cb) {
+        if(currentUser.hasOwnProperty('$promise')) {
+          currentUser.$promise.then(function() {
+            cb(true);
+          }).catch(function() {
+            cb(false);
+          });
+        } else if(currentUser.hasOwnProperty('role')) {
+          cb(true);
+        } else {
+          cb(false);
+        }
       },
 
       /**

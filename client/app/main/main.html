@@ -1,0 +1,28 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<header class="hero-unit" id="banner">
+  <div class="container">
+    <h1>Android Device Farm</h1>
+    <p class="lead">Share your device with your co-workers.</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Connected devices:</h1>
+      <ul class="nav nav-tabs nav-stacked" ng-repeat="thing in awesomeThings">
+        <li><a href="#" tooltip="{{thing.info}}">{{thing.name}} adb connect xxx.xxx.xxx.xxx:{{thing.port}} {{thing.serial}}<button type="button" class="close" ng-click="deleteThing(thing)">&times;</button></a></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="container">
+      <p>
+        <a href="http://skplanet.com">SK planet</a> |
+         <a href="http://wiki.skplanet.co.kr/display/SQE">SQE Team</a></p>
+  </div>
+</footer>

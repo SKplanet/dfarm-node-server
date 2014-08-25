@@ -1,9 +1,10 @@
 'use strict';
 
-angular.module('adbfarmApp')
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
+angular.module('devicefarmApp')
+  .config(function ($stateProvider) {
+    $stateProvider
+      .state('main', {
+        url: '/',
         templateUrl: 'app/main/main.html',
         controller: 'MainCtrl'
       });

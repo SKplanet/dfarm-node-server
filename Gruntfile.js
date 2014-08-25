@@ -1,6 +1,13 @@
+// Generated on 2014-08-25 using generator-angular-fullstack 2.0.10
 'use strict';
 
 module.exports = function (grunt) {
+  var localConfig;
+  try {
+    localConfig = require('./server/config/local.env');
+  } catch(e) {
+    localConfig = {};
+  }
 
   // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
@@ -9,7 +16,8 @@ module.exports = function (grunt) {
     ngtemplates: 'grunt-angular-templates',
     cdnify: 'grunt-google-cdn',
     protractor: 'grunt-protractor-runner',
-    injector: 'grunt-asset-injector'
+    injector: 'grunt-asset-injector',
+    buildcontrol: 'grunt-build-control'
   });
 
   // Time how long tasks take. Can help when optimizing build times
@@ -19,6 +27,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     // Project settings
+    pkg: grunt.file.readJSON('package.json'),
     yeoman: {
       // configurable paths
       client: require('./bower.json').appPath || 'client',
@@ -71,21 +80,15 @@ module.exports = function (grunt) {
         ],
         tasks: ['newer:jshint:all', 'karma']
       },
-      injectSass: {
+      injectLess: {
         files: [
-          '<%= yeoman.client %>/{app,components}/**/*.{scss,sass}'],
-        tasks: ['injector:sass']
+          '<%= yeoman.client %>/{app,components}/**/*.less'],
+        tasks: ['injector:less']
       },
-      sass: {
+      less: {
         files: [
-          '<%= yeoman.client %>/{app,components}/**/*.{scss,sass}'],
-        tasks: ['sass', 'autoprefixer']
-      },
-      jade: {
-        files: [
-          '<%= yeoman.client %>/{app,components}/*',
-          '<%= yeoman.client %>/{app,components}/**/*.jade'],
-        tasks: ['jade']
+          '<%= yeoman.client %>/{app,components}/**/*.less'],
+        tasks: ['less', 'autoprefixer']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -188,7 +191,7 @@ module.exports = function (grunt) {
         options: {
           nodeArgs: ['--debug-brk'],
           env: {
-            PORT: process.env.PORT || 9000
+            PORT: process.env.PORT || 9001
           },
           callback: function (nodemon) {
             nodemon.on('log', function (event) {
@@ -207,11 +210,11 @@ module.exports = function (grunt) {
     },
 
     // Automatically inject Bower components into the app
-    bowerInstall: {
+    wiredep: {
       target: {
         src: '<%= yeoman.client %>/index.html',
         ignorePath: '<%= yeoman.client %>/',
-        exclude: [/bootstrap-sass-official/, /bootstrap.js/, /bootstrap.css/, /font-awesome.css/ ]
+        exclude: [/bootstrap-sass-official/, /bootstrap.js/, '/json3/', '/es5-shim/', /bootstrap.css/, /font-awesome.css/ ]
       }
     },
 
@@ -283,7 +286,7 @@ module.exports = function (grunt) {
 
     // Allow the use of non-minsafe AngularJS files. Automatically makes it
     // minsafe compatible so Uglify does not destroy the ng references
-    ngmin: {
+    ngAnnotate: {
       dist: {
         files: [{
           expand: true,
@@ -298,7 +301,7 @@ module.exports = function (grunt) {
     ngtemplates: {
       options: {
         // This should be the name of your apps angular module
-        module: 'adbfarmApp',
+        module: 'devicefarmApp',
         htmlmin: {
           collapseBooleanAttributes: true,
           collapseWhitespace: true,
@@ -325,7 +328,7 @@ module.exports = function (grunt) {
     // Replace Google CDN references
     cdnify: {
       dist: {
-        html: ['<%= yeoman.dist %>/*.html']
+        html: ['<%= yeoman.dist %>/public/*.html']
       }
     },
 
@@ -367,15 +370,35 @@ module.exports = function (grunt) {
       }
     },
 
+    buildcontrol: {
+      options: {
+        dir: 'dist',
+        commit: true,
+        push: true,
+        connectCommits: false,
+        message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+      },
+      heroku: {
+        options: {
+          remote: 'heroku',
+          branch: 'master'
+        }
+      },
+      openshift: {
+        options: {
+          remote: 'openshift',
+          branch: 'master'
+        }
+      }
+    },
+
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [
-        'jade',
-        'sass',
+        'less',
       ],
       test: [
-        'jade',
-        'sass',
+        'less',
       ],
       debug: {
         tasks: [
@@ -387,8 +410,7 @@ module.exports = function (grunt) {
         }
       },
       dist: [
-        'jade',
-        'sass',
+        'less',
         'imagemin',
         'svgmin'
       ]
@@ -429,44 +451,23 @@ module.exports = function (grunt) {
       prod: {
         NODE_ENV: 'production'
       },
-      all: require('./server/config/local.env')
+      all: localConfig
     },
 
-    // Compiles Jade to html
-    jade: {
-      compile: {
-        options: {
-          data: {
-            debug: false
-          }
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.client %>',
-          src: [
-            '{app,components}/**/*.jade'
-          ],
-          dest: '.tmp',
-          ext: '.html'
-        }]
-      }
-    },
-
-    // Compiles Sass to CSS
-    sass: {
+    // Compiles Less to CSS
+    less: {
+      options: {
+        paths: [
+          '<%= yeoman.client %>/bower_components',
+          '<%= yeoman.client %>/app',
+          '<%= yeoman.client %>/components'
+        ]
+      },
       server: {
-        options: {
-          loadPath: [
-            '<%= yeoman.client %>/bower_components',
-            '<%= yeoman.client %>/app',
-            '<%= yeoman.client %>/components'
-          ],
-          compass: false
-        },
         files: {
-          '.tmp/app/app.css' : '<%= yeoman.client %>/app/app.scss'
+          '.tmp/app/app.css' : '<%= yeoman.client %>/app/app.less'
         }
-      }
+      },
     },
 
     injector: {
@@ -494,8 +495,8 @@ module.exports = function (grunt) {
         }
       },
 
-      // Inject component scss into app.scss
-      sass: {
+      // Inject component less into app.less
+      less: {
         options: {
           transform: function(filePath) {
             filePath = filePath.replace('/client/app/', '');
@@ -506,9 +507,9 @@ module.exports = function (grunt) {
           endtag: '// endinjector'
         },
         files: {
-          '<%= yeoman.client %>/app/app.scss': [
-            '<%= yeoman.client %>/{app,components}/**/*.{scss,sass}',
-            '!<%= yeoman.client %>/app/app.{scss,sass}'
+          '<%= yeoman.client %>/app/app.less': [
+            '<%= yeoman.client %>/{app,components}/**/*.less',
+            '!<%= yeoman.client %>/app/app.less'
           ]
         }
       },
@@ -542,7 +543,7 @@ module.exports = function (grunt) {
     setTimeout(function () {
       grunt.log.writeln('Done waiting!');
       done();
-    }, 500);
+    }, 1500);
   });
 
   grunt.registerTask('express-keepalive', 'Keep grunt running', function() {
@@ -551,17 +552,17 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'open', 'express-keepalive']);
+      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
     }
 
     if (target === 'debug') {
       return grunt.task.run([
         'clean:server',
         'env:all',
-        'injector:sass', 
+        'injector:less', 
         'concurrent:server',
         'injector',
-        'bowerInstall',
+        'wiredep',
         'autoprefixer',
         'concurrent:debug'
       ]);
@@ -570,10 +571,10 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'env:all',
-      'injector:sass', 
+      'injector:less', 
       'concurrent:server',
       'injector',
-      'bowerInstall',
+      'wiredep',
       'autoprefixer',
       'express:dev',
       'wait',
@@ -600,7 +601,7 @@ module.exports = function (grunt) {
       return grunt.task.run([
         'clean:server',
         'env:all',
-        'injector:sass', 
+        'injector:less', 
         'concurrent:test',
         'injector',
         'autoprefixer',
@@ -613,10 +614,10 @@ module.exports = function (grunt) {
         'clean:server',
         'env:all',
         'env:test',
-        'injector:sass', 
+        'injector:less', 
         'concurrent:test',
         'injector',
-        'bowerInstall',
+        'wiredep',
         'autoprefixer',
         'express:dev',
         'protractor'
@@ -631,15 +632,15 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'injector:sass', 
+    'injector:less', 
     'concurrent:dist',
     'injector',
-    'bowerInstall',
+    'wiredep',
     'useminPrepare',
     'autoprefixer',
     'ngtemplates',
     'concat',
-    'ngmin',
+    'ngAnnotate',
     'copy:dist',
     'cdnify',
     'cssmin',

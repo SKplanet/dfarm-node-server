@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adbfarmApp')
+angular.module('devicefarmApp')
   .controller('SettingsCtrl', function ($scope, User, Auth) {
     $scope.errors = {};
 

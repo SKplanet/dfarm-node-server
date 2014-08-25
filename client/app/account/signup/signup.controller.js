@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adbfarmApp')
+angular.module('devicefarmApp')
   .controller('SignupCtrl', function ($scope, Auth, $location) {
     $scope.user = {};
     $scope.errors = {};
@@ -30,4 +30,5 @@ angular.module('adbfarmApp')
         });
       }
     };
+
   });

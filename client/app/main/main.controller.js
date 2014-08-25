@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('adbfarmApp')
+angular.module('devicefarmApp')
   .controller('MainCtrl', function ($scope, $http, socket) {
+    $scope.awesomeThings = [];
 
     $http.get('/api/things').success(function(awesomeThings) {
       $scope.awesomeThings = awesomeThings;

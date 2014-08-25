@@ -5,6 +5,8 @@
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://localhost/adbfarm-dev'
-  }
+    uri: 'mongodb://localhost/devicefarm-dev'
+  },
+
+  seedDB: true
 };

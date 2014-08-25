@@ -3,7 +3,7 @@
 /**
  * Removes server error when user updates input
  */
-angular.module('adbfarmApp')
+angular.module('devicefarmApp')
   .directive('mongooseError', function () {
     return {
       restrict: 'A',

@@ -6,8 +6,6 @@ var mongoose = require('mongoose'),
 var ThingSchema = new Schema({
   name: String,
   info: String,
-  port: Number,
-  serial: String,
   active: Boolean
 });
 
