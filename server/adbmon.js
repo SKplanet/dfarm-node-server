@@ -1,29 +1,30 @@
 'use strict';
 
 module.exports = function (config) {
-  console.log(config.ip);
 
-  var adb = require('adbkit')
-  var client = adb.createClient()
+  var adb = require('adbkit');
+  var client = adb.createClient();
   var basePort = 6667;
-  var Thing = require('./api/thing/thing.model');
+  var Device = require('./api/device/device.model');
 
   function startTcpUsbBridge(serial) {
+
     var assignedPort = basePort++
     setTimeout(function () {
+
       client.getProperties(serial)
         .then(function (data) {
+          console.log( JSON.stringify(data) );
           console.log(data['ro.product.model']);
           console.log(data['gsm.network.type']);
-          console.log(assignedPort);
 
-          Thing.create({
+          Device.create({
             name : data['ro.product.model'],
             port : assignedPort,
             serial : serial,
-            info : serial
+            ipaddress : data['dhcp.wlan0.ipaddress']
           }, function() {
-            Thing.find({}, function (error, data) {
+            Device.find({}, function (error, data) {
               console.log(data);
             });
           });
@@ -52,7 +53,7 @@ module.exports = function (config) {
       })
       tracker.on('remove', function (device) {
         console.log('Device %s was unplugged', device.id)
-          Thing.find({serial:device.id}, function(error, data) {
+          Device.find({serial:device.id}, function(error, data) {
 
             data.forEach(function(d){
               d.remove();

@@ -11,8 +11,8 @@
   <div class="row">
     <div class="col-lg-12">
       <h1 class="page-header">Connected devices:</h1>
-      <ul class="nav nav-tabs nav-stacked" ng-repeat="thing in awesomeThings">
-        <li><a href="#" tooltip="{{thing.info}}">{{thing.name}} adb connect xxx.xxx.xxx.xxx:{{thing.port}} {{thing.serial}}<button type="button" class="close" ng-click="deleteThing(thing)">&times;</button></a></li>
+      <ul class="nav nav-tabs nav-stacked" ng-repeat="device in devices">
+        <li><a href="#" tooltip="{{device.info}}">{{device.name}} adb connect {{device.ipaddress}}:{{device.port}} {{device.serial}}<button type="button" class="close" ng-click="deleteDevice(device)">&times;</button></a></li>
       </ul>
     </div>
   </div>

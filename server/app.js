@@ -24,6 +24,7 @@ var socketio = require('socket.io').listen(server);
 require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
+require('./adbmon')(config);
 
 // Start server
 server.listen(config.port, config.ip, function () {
