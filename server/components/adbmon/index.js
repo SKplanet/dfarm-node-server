@@ -5,7 +5,7 @@ module.exports = function (config) {
   var adb = require('adbkit');
   var client = adb.createClient();
   var basePort = 6667;
-  var Device = require('./api/device/device.model');
+  var Device = require('../../api/device/device.model');
 
   function startTcpUsbBridge(serial) {
 
@@ -14,33 +14,31 @@ module.exports = function (config) {
 
       client.getProperties(serial)
         .then(function (data) {
-          console.log( JSON.stringify(data) );
-          console.log(data['ro.product.model']);
-          console.log(data['gsm.network.type']);
+
+          var deviceName = data['ro.product.model'];
+          var osVersion = data['ro.build.version.release'];
+          var networkType = data['gsm.network.type'];
 
           Device.create({
-            name : data['ro.product.model'],
+            name : deviceName,
             port : assignedPort,
             serial : serial,
-            ipaddress : data['dhcp.wlan0.ipaddress']
-          }, function() {
-            Device.find({}, function (error, data) {
-              console.log(data);
-            });
+            tags : [deviceName, osVersion, networkType]
           });
+
         });
     }, 1000);
 
     var server = client.createTcpUsbBridge(serial);
     server.listen(assignedPort);
     server.on('listening', function () {
-      console.log("server started");
+      console.log("[adbmon] Tcp Usb Bridge server started");
     });
     server.on('connection', function () {
-      console.log("client connection");
+      console.log("[adbmon] client connection");
     });
     server.on('error', function (error) {
-      console.log("error " + error);
+      console.log("[adbmon] error " + error);
     });
   }
 
@@ -49,25 +47,25 @@ module.exports = function (config) {
       tracker.on('add', function (device) {
         var serial = device.id;
         startTcpUsbBridge(serial);
-        console.log('Device %s was plugged in', serial)
+        console.log('[adbmon] Device %s was plugged in', serial)
       })
       tracker.on('remove', function (device) {
-        console.log('Device %s was unplugged', device.id)
+        console.log('[adbmon] Device %s was unplugged', device.id)
           Device.find({serial:device.id}, function(error, data) {
 
             data.forEach(function(d){
               d.remove();
             });
-            console.log("aaa" , data);
+            //console.log("[adbmon] " , data);
           });
 
 
       })
       tracker.on('end', function () {
-        console.log('Tracking stopped')
+        console.log('[adbmon] Tracking stopped')
       })
     })
     .catch(function (err) {
-      console.error('Something went wrong:', err.stack)
+      console.error('[adbmon] Something went wrong:', err.stack)
     })
 };

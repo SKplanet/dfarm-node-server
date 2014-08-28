@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Connected client:</h1>
+      <ul class="nav nav-tabs nav-stacked" ng-repeat="device in devices">
+        <li><a href="#" tooltip="{{device.info}}">{{device.name}} adb connect {{device.ipaddress}}:{{device.port}} {{device.serial}}<button type="button" class="close" ng-click="deleteDevice(device)">&times;</button></a></li>
+      </ul>
+    </div>
+  </div>
+
+</div>

@@ -24,7 +24,8 @@
     "socket.io": "~1.0.6",
     "socketio-jwt": "^2.0.2",
     "adbkit": "^2.0.15",
-    "string": "^1.9.1"
+    "string": "^1.9.1",
+    "ip": "^0.3.1"
   },
   "devDependencies": {
     "grunt": "~0.4.4",

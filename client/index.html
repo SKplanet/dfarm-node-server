@@ -27,7 +27,16 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
+    <div ng-include="'components/navbar/navbar.html'"></div>
     <div ui-view=""></div>
+    <footer class="footer">
+      <div class="container">
+          <p>
+            <a href="http://skplanet.com">SK planet</a> |
+             <a href="http://wiki.skplanet.co.kr/display/SQE">SQE Team</a></p>
+      </div>
+    </footer>
+
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -71,6 +80,8 @@
           <script src="app/admin/admin.js"></script>
           <script src="app/main/main.controller.js"></script>
           <script src="app/main/main.js"></script>
+          <script src="app/state/state.controller.js"></script>
+          <script src="app/state/state.js"></script>
           <script src="components/auth/auth.service.js"></script>
           <script src="components/auth/user.service.js"></script>
           <script src="components/mongoose-error/mongoose-error.directive.js"></script>

@@ -5,10 +5,38 @@ var mongoose = require('mongoose'),
 
 var DeviceSchema = new Schema({
   name: String,
-  ipaddress: String,
   port: Number,
   serial: {type:String, unique: true},
-  active: Boolean
+  whoused: {type:String, default: ''},
+  tags: [String] // device name, os version
 });
+
+/**
+ * Virtuals
+ */
+DeviceSchema
+  .virtual('active')
+  .get(function() {
+    return !!this.whoused;
+  });
+
+/**
+ * Methods
+ */
+DeviceSchema.methods = {
+  /**
+   * Return available device
+   *
+   * @param {String} password
+   * @return {String}
+   * @api public
+   */
+  getAvailableDevice: function() {
+    if (!password || !this.salt) return '';
+    var salt = new Buffer(this.salt, 'base64');
+    return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
+  }
+};
+
 
 module.exports = mongoose.model('Device', DeviceSchema);

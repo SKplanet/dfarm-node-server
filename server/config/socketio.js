@@ -13,9 +13,9 @@ function onDisconnect(socket) {
 // When the user connects.. perform this
 function onConnect(socket) {
   // When the client emits 'info', this listens and executes
-  socket.on('info', function (data) {
-    console.info('[%s] %s', socket.address, JSON.stringify(data, null, 2));
-  });
+  // socket.on('info', function (data) {
+  //   console.info('[%s] %s', socket.id, JSON.stringify(data, null, 2));
+  // });
 
   // Insert sockets below
   require('../api/device/device.socket').register(socket);
@@ -43,6 +43,8 @@ module.exports = function (socketio) {
             process.env.DOMAIN;
 
     socket.connectedAt = new Date();
+
+    console.info('New client connected (id=' + socket.id + ').');
 
     // Call onDisconnect.
     socket.on('disconnect', function () {

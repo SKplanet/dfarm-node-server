@@ -5,6 +5,7 @@
 
 'use strict';
 
+var Device = require('../api/device/device.model');
 var User = require('../api/user/user.model');
 User.find({}).remove(function() {
   User.create({
@@ -19,7 +20,20 @@ User.find({}).remove(function() {
     email: 'admin@admin.com',
     password: 'admin'
   }, function() {
-      console.log('finished populating users');
+      console.log('[seedDB] finished populating users');
     }
   );
+});
+
+Device.find({}, function(err, devices){
+
+  devices.forEach(function(device){
+
+    device.whoused = '';
+    device.save();
+
+  });
+
+
+
 });
