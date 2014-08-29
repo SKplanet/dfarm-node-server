@@ -16,7 +16,6 @@ exports.register = function(socket) {
     onRemove(socket, doc);
   });
 
-
   var userAgent = socket.handshake.headers['user-agent'];
   if( userAgent.match(/node|java/i) ){
     registerEvent(socket)

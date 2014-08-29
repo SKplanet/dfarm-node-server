@@ -18,12 +18,19 @@ module.exports = function (config) {
           var deviceName = data['ro.product.model'];
           var osVersion = data['ro.build.version.release'];
           var networkType = data['gsm.network.type'];
+          var tags = [deviceName, osVersion];
+
+          if( networkType ){
+            tags.push(networkType);
+          }
 
           Device.create({
             name : deviceName,
             port : assignedPort,
             serial : serial,
-            tags : [deviceName, osVersion, networkType]
+            tags : tags,
+          }, function(doc){
+            console.log("DB done...", doc);
           });
 
         });
