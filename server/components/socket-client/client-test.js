@@ -1,5 +1,5 @@
 var util = require('util');
-var socket = require('socket.io-client')('http://10.202.35.214:9001');
+var socket = require('socket.io-client')('http://10.202.35.214:9000');
 var S = require('string');
 var isSocketConnected = false;
 

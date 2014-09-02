@@ -6,13 +6,18 @@
 
 var Device = require('./device.model'),
      queue = require('../../config/socket.queue');
+
+var adb = require('adbkit');
 var ip = require('ip');
+var client = adb.createClient();
+var TcpUsbBridges = [];
 
 exports.register = function(socket) {
   Device.schema.post('save', function (doc) {
     onSave(socket, doc);
   });
   Device.schema.post('remove', function (doc) {
+    console.log("[device.socket] removed device info from DB");
     onRemove(socket, doc);
   });
 
@@ -20,6 +25,10 @@ exports.register = function(socket) {
   if( userAgent.match(/node|java/i) ){
     registerEvent(socket)
   }
+}
+
+exports.unregister = function(socket){
+  // TODO: https://trello.com/c/KoItCuSE/29--
 }
 
 function registerEvent(socket){
@@ -31,8 +40,6 @@ function registerEvent(socket){
   socket.on('disconnect', function(){
     onReleaseDevice.call(socket)
   });
-
-
   socket.on('state', function(){
     queue.state();
   });
@@ -52,6 +59,7 @@ function onSearchDevice(data) {
  
     if(device){
       device.whoused = socket.id;
+      assignDevicePort(socket.id, device.serial, device.port);
       socket.emit("svc_device", { ip:ip.address(), port:device.port, tags: device.tags });
       device.save(function(err){
          if (err) { return console.log('saving error') }
@@ -72,21 +80,45 @@ function onReleaseDevice(){
 
   var socket = this;
 
-  console.log('client id: ', socket.id);
+  if( TcpUsbBridges[socket.id] ) {
+    TcpUsbBridges[socket.id].close();
+    TcpUsbBridges[socket.id] = null;
+  }
 
   Device.findOne({whoused:socket.id}, function (err, device) {
   
-    console.log("whoused:::::::::: ", device, socket.id);
-
     if(device){
       device.whoused = ''; 
       device.save(function(err){
         if (err) { return console.log('saving error') }
-        console.log("=-=-=-=-= device \n", device);
       });
     }
 
   });
+}
+
+function assignDevicePort(socketid, serial, port){
+
+  var server = client.createTcpUsbBridge(serial);
+  server.listen(port);
+  server.on('listening', function () {
+    console.log("[adbmon] Tcp Usb Bridge server started");
+  });
+  server.on('connection', function () {
+    console.log("[adbmon] client connection");
+  });
+  server.on('error', function (error) {
+    console.log("[adbmon] error " + error);
+  });
+  server.on('close', function () {
+    console.log("[adbmon] closed ");
+  });
+
+  if( TcpUsbBridges[socketid] == null ){
+    TcpUsbBridges[socketid] = server;
+  }else{
+    console.log("[ERR] TcpUsbBridge is duplicated!!")
+  }
 }
 
 function assignDeviceFromQueue(device){
@@ -94,6 +126,8 @@ function assignDeviceFromQueue(device){
 
   if(socket){
     device.whoused = socket.id;
+
+    assignDevicePort(socket.id, device.serial, device.port);
     socket.emit("svc_device", { ip:ip.address(), port:device.port, tags: device.tags });
     device.save(function(err){
       if (err) { return console.log('saving error') }
@@ -113,6 +147,5 @@ function onSave(socket, doc, cb) {
 }
 
 function onRemove(socket, doc, cb) {
-  console.log('device is out', doc)
   socket.emit('device:remove', doc);
 }

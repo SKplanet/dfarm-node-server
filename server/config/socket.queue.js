@@ -10,7 +10,7 @@ var service = {
 
     socket.on('disconnect', function(){
       var index = clients.indexOf(socket);
-      if (index != -1) {
+      if (index !== -1) {
           clients.splice(index, 1);
           console.info('Client gone (id=' + socket.id + ').');
           console.info("Remain clients:", clients.length);

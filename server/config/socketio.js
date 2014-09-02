@@ -8,6 +8,7 @@ var config = require('./environment');
 
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
+  require('../api/device/device.socket').unregister(socket);
 }
 
 // When the user connects.. perform this
@@ -49,7 +50,7 @@ module.exports = function (socketio) {
     // Call onDisconnect.
     socket.on('disconnect', function () {
       onDisconnect(socket);
-      console.info('[%s] DISCONNECTED', socket.address);
+      console.info('[%s] DISCONNECTED - %s', socket.address, socket.id);
     });
 
     // Call onConnect.

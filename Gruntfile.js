@@ -35,7 +35,7 @@ module.exports = function (grunt) {
     },
     express: {
       options: {
-        port: process.env.PORT || 9001
+        port: process.env.PORT || 9000
       },
       dev: {
         options: {
@@ -191,7 +191,7 @@ module.exports = function (grunt) {
         options: {
           nodeArgs: ['--debug-brk'],
           env: {
-            PORT: process.env.PORT || 9001
+            PORT: process.env.PORT || 9000
           },
           callback: function (nodemon) {
             nodemon.on('log', function (event) {
@@ -552,7 +552,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
+      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'express-keepalive']);
     }
 
     if (target === 'debug') {
