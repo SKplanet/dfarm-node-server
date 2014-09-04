@@ -5,10 +5,17 @@
 'use strict';
 
 var config = require('./environment');
+var Client = require('../api/client/client.model');
 
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
-  require('../api/device/device.socket').unregister(socket);
+  //require('../components/jenkins-scheduler').unregister(socket);
+
+  Client.findOne({ id : socket.id }, function(err, client){
+    if( err) console.log(err);
+    client.remove();
+  });
+
 }
 
 // When the user connects.. perform this
@@ -18,6 +25,22 @@ function onConnect(socket) {
   //   console.info('[%s] %s', socket.id, JSON.stringify(data, null, 2));
   // });
 
+  var userAgent = socket.handshake.headers['user-agent'];
+  
+  if( userAgent.match(/node|java/i) ){
+    socket.connectedTo = "jenkins-plugin";
+    require('../components/jenkins-scheduler').register(socket);
+  }else{
+    socket.connectedTo = "web";
+  }
+
+  Client.create({
+    id : socket.id,
+    type : socket.connectedTo,
+    from : socket.address,
+    connectedAt : socket.connectedAt
+  });
+
   socket.on('join', function(room) {
     socket.join(room);
   });
@@ -25,9 +48,7 @@ function onConnect(socket) {
   socket.on('leave', function(room) {
     socket.leave(room);
   });
-
-  // Insert sockets below
-  //require('../api/device/device.socket').register(socket);
+  
 }
 
 module.exports = function (socketio) {
@@ -61,6 +82,7 @@ module.exports = function (socketio) {
     socket.on('disconnect', function () {
       onDisconnect(socket);
       console.info('[%s] DISCONNECTED - %s', socket.address, socket.id);
+
     });
 
     // Call onConnect.
@@ -69,5 +91,6 @@ module.exports = function (socketio) {
   });
 
   // Insert sockets below
+  require('../api/client/client.socket').register(socketio);
   require('../api/device/device.socket').register(socketio);
 };

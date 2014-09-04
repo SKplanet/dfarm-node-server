@@ -6,7 +6,13 @@
 'use strict';
 
 var Device = require('../api/device/device.model');
+var Client = require('../api/client/client.model');
 var User = require('../api/user/user.model');
+
+Client.find({}).remove(function(){
+  
+});
+
 User.find({}).remove(function() {
   User.create({
     provider: 'local',

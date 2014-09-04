@@ -20,5 +20,20 @@
       </ul>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Connented Client</h1>
+      <ul class="nav nav-tabs nav-stacked" ng-repeat="client in clients">
+        <li>
+            {{client.id}} 
+            {{client.from}} 
+            <span> {{client.connectedAt}}</span>
+            <span> {{client.type}}</span>
+            <button type="button" class="close" ng-click="deleteDevice(device)">&times;</button>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>
 
