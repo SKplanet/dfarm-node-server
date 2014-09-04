@@ -12,19 +12,19 @@ var ip = require('ip');
 var client = adb.createClient();
 var TcpUsbBridges = [];
 
-exports.register = function(socket) {
+exports.register = function(socketio) {
   Device.schema.post('save', function (doc) {
-    onSave(socket, doc);
+    onSave(socketio, doc);
   });
   Device.schema.post('remove', function (doc) {
     console.log("[device.socket] removed device info from DB");
-    onRemove(socket, doc);
+    onRemove(socketio, doc);
   });
 
-  var userAgent = socket.handshake.headers['user-agent'];
-  if( userAgent.match(/node|java/i) ){
-    registerEvent(socket)
-  }
+  // var userAgent = socket.handshake.headers['user-agent'];
+  // if( userAgent.match(/node|java/i) ){
+  //   registerEvent(socket)
+  // }
 }
 
 exports.unregister = function(socket){
@@ -69,7 +69,6 @@ function onSearchDevice(data) {
 
       // 일단 큐에 넣는다.
       queue.put(socket);
-      queue.state();
     }
 
   });
@@ -137,15 +136,15 @@ function assignDeviceFromQueue(device){
   queue.state();
 }
 
-function onSave(socket, doc, cb) {
+function onSave(socketio, doc, cb) {
   
   if(doc.whoused === ''){
     assignDeviceFromQueue(doc);
   }
   
-  socket.emit('device:save', doc);
+  socketio.to('device').emit('device:save', doc);
 }
 
-function onRemove(socket, doc, cb) {
-  socket.emit('device:remove', doc);
+function onRemove(socketio, doc, cb) {
+  socketio.to('device').emit('device:remove', doc);
 }

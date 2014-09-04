@@ -6,6 +6,7 @@ var service = {
     var index = clients.indexOf(socket);
     if (index === -1) {
       clients.push(socket);
+      this.state();
     }
 
     socket.on('disconnect', function(){
@@ -19,7 +20,8 @@ var service = {
   },
 
   get : function(){
-   return clients.shift();
+    return clients.shift();
+    this.state();
   },
 
   state : function(){

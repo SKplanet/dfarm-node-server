@@ -18,8 +18,16 @@ function onConnect(socket) {
   //   console.info('[%s] %s', socket.id, JSON.stringify(data, null, 2));
   // });
 
+  socket.on('join', function(room) {
+    socket.join(room);
+  });
+
+  socket.on('leave', function(room) {
+    socket.leave(room);
+  });
+
   // Insert sockets below
-  require('../api/device/device.socket').register(socket);
+  //require('../api/device/device.socket').register(socket);
 }
 
 module.exports = function (socketio) {
@@ -38,14 +46,16 @@ module.exports = function (socketio) {
   //   handshake: true
   // }));
 
+  // socketio.use(function(socket, next){
+  //   next();
+  // });
+
   socketio.on('connection', function (socket) {
     socket.address = socket.handshake.address !== null ?
             socket.handshake.address.address + ':' + socket.handshake.address.port :
             process.env.DOMAIN;
 
     socket.connectedAt = new Date();
-
-    console.info('New client connected (id=' + socket.id + ').');
 
     // Call onDisconnect.
     socket.on('disconnect', function () {
@@ -55,6 +65,9 @@ module.exports = function (socketio) {
 
     // Call onConnect.
     onConnect(socket);
-    console.info('[%s] CONNECTED', socket.address);
+    console.info('[%s] CONNECTED - %s', socket.address, socket.id);
   });
+
+  // Insert sockets below
+  require('../api/device/device.socket').register(socketio);
 };
