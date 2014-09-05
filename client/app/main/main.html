@@ -8,15 +8,17 @@
   <div class="row">
     <div class="col-lg-12">
       <h1 class="page-header">Status by Device</h1>
-      <ul class="nav nav-tabs nav-stacked" ng-repeat="device in devices">
-        <li>
+      <ul class="nav nav-stacked">
+        <li data-ng-repeat-start="device in devices">
           <a href="devices/{{device.serial}}" tooltip="{{device.info}}">
             {{device.name}} 
             <span class="label state" data-ng-class="{'label-warning': device.whoused, 'label-success': !device.whoused}"><i class="fa" data-ng-class="{'fa-check': !!device.whoused}"> {{device.whoused ? "in use" : "available"}}</i></span>
-            <span> {{device.whoused}}</span>
-            <button type="button" class="close" ng-click="deleteDevice(device)">&times;</button>
+            <span data-ng-repeat="tag in device.tags">[{{tag}}] </span>
+            <span> {{device.ip}}</span>
+            <button type="button" class="close" data-ng-click="deleteDevice(device)">&times;</button>
           </a>
         </li>
+        <div ng-if="false" data-ng-repeat-end></div>
       </ul>
     </div>
   </div>
@@ -24,13 +26,13 @@
   <div class="row">
     <div class="col-lg-12">
       <h1 class="page-header">Connented Client</h1>
-      <ul class="nav nav-tabs nav-stacked" ng-repeat="client in clients">
-        <li>
-            {{client.id}} 
-            {{client.from}} 
-            <span> {{client.connectedAt}}</span>
-            <span> {{client.type}}</span>
-            <button type="button" class="close" ng-click="deleteDevice(device)">&times;</button>
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat="client in clients">
+            <span>{{client.connectedAt}}</span>
+            <span> | {{client.type}} | </span>
+            <span>{{client.ip}}</span>
+            
+            <button type="button" class="close" data-ng-click="deleteClient(client)">&times;</button>
         </li>
       </ul>
     </div>

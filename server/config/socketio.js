@@ -6,6 +6,7 @@
 
 var config = require('./environment');
 var Client = require('../api/client/client.model');
+var ip = require('ip');
 
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
@@ -27,17 +28,22 @@ function onConnect(socket) {
 
   var userAgent = socket.handshake.headers['user-agent'];
   
-  if( userAgent.match(/node|java/i) ){
+  if( userAgent.match(/java/i) ){
     socket.connectedTo = "jenkins-plugin";
     require('../components/jenkins-scheduler').register(socket);
-  }else{
+  } 
+  else if( userAgent.match(/node/i) ){
+    socket.connectedTo = "node-test-client";
+    require('../components/jenkins-scheduler').register(socket);
+  } 
+  else{
     socket.connectedTo = "web";
   }
 
   Client.create({
     id : socket.id,
     type : socket.connectedTo,
-    from : socket.address,
+    ip : socket.request.connection.remoteAddress || ip.address(),
     connectedAt : socket.connectedAt
   });
 

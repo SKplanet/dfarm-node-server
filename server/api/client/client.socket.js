@@ -5,6 +5,7 @@
 'use strict';
 
 var Client = require('./client.model');
+var scheduler = require('../../components/jenkins-scheduler');
 
 exports.register = function(socketio) {
   
@@ -22,5 +23,6 @@ function onSave(socketio, doc, cb) {
 }
 
 function onRemove(socketio, doc, cb) {
+  scheduler.notify('client:remove', doc);
   socketio.to('client').emit('client:remove', doc);
 }

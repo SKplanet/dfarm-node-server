@@ -26,6 +26,8 @@ function onSearchDevice(data) {
  
     if(device){
       device.whoused = socket.id;
+      device.ip = socket.request.connection.remoteAddress || ip.address();
+
       assignDevicePort(socket.id, device.serial, device.port);
       socket.emit("svc_device", { ip:ip.address(), port:device.port, tags: device.tags });
       device.save(function(err){
@@ -55,6 +57,8 @@ function onReleaseDevice(){
   
     if(device){
       device.whoused = ''; 
+      device.ip = '0.0.0.0';
+
       device.save(function(err){
         if (err) { return console.log('saving error') }
       });
@@ -92,6 +96,7 @@ function assignDeviceFromQueue(device){
 
   if(socket){
     device.whoused = socket.id;
+    device.ip = socket.request.connection.remoteAddress || ip.address();
 
     assignDevicePort(socket.id, device.serial, device.port);
     socket.emit("svc_device", { ip:ip.address(), port:device.port, tags: device.tags });
@@ -147,6 +152,12 @@ exports.notify = function(message, data){
     if ( data.whoused === '' ){
       assignDeviceFromQueue(data);
     }
+
+  }
+
+  if(message === 'client:remove') {
+
+    console.log(data);
 
   }
 

@@ -54,8 +54,6 @@ angular.module('devicefarmApp')
       },
  
       save: function(item) {
-        console.log(item);
-
         var array = this.array;
         var oldItem = _.find(array, {_id: item._id});
         var index = array.indexOf(oldItem);
@@ -73,8 +71,6 @@ angular.module('devicefarmApp')
         this.cb(event, item, array);
       },
       remove: function(item) {
-        console.log(item);
-        
         var array = this.array;
         var event = 'deleted';
         _.remove(array, {_id: item._id});

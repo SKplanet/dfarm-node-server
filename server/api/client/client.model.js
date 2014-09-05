@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 var ClientSchema = new Schema({
   id : {type:String, unique: true},
   type: String,
-  from: String,
+  ip : String,
   connectedAt: Date
 });
 
