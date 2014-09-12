@@ -41,7 +41,10 @@ function onJenDevice(data) {
     }else{
 
       // there is no avilable device.
-      watingSocketQueue.push(socket);
+      var index = _.indexOf(watingSocketQueue, socket);
+      if(index < 0){
+        watingSocketQueue.push(socket);
+      }
     }
 
   });
