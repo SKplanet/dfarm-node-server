@@ -1,13 +1,27 @@
 'use strict';
 
 var _ = require('lodash');
+var moment = require('moment');
 var Client = require('./client.model');
 
 // Get list of clients
 exports.index = function(req, res) {
   Client.find(function (err, clients) {
     if(err) { return handleError(res, err); }
-    return res.json(200, clients);
+
+    var result = [];
+
+    clients.forEach(function(client, i, context){
+      result.push({
+        _id: client._id,
+        id : client.id,
+        ip : client.ip,
+        type: client.type,
+        dispConnDate: moment(client.connectedAt).format('YYYY-MM-DD hh:mm:ss')
+      });
+    });
+
+    return res.json(200, result);
   });
 };
 

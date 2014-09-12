@@ -5,6 +5,7 @@
 'use strict';
 
 var Client = require('./client.model');
+var moment = require('moment');
 var scheduler = require('../../components/jenkins-scheduler');
 
 exports.register = function(socketio) {
@@ -18,11 +19,24 @@ exports.register = function(socketio) {
   });
 }
 
+// Mongo Hook for WebSocket
 function onSave(socketio, doc, cb) {
-  socketio.to('client').emit('client:save', doc);
+  socketio.to('client').emit('client:save', {
+    _id: doc._id,
+    id : doc.id,
+    ip : doc.ip,
+    type: doc.type,
+    deviceName: doc.deviceName,
+    dispConnDate: moment(doc.connectedAt).format('YYYY-MM-DD hh:mm:ss')
+  });
 }
 
 function onRemove(socketio, doc, cb) {
+
+  // 스케쥴러에게 관리자가 해당 클라이언트 연결을 끊으라는 명령을 한 경우지!! 
   scheduler.notify('client:remove', doc);
+
+
+  // 화면에서 제거해라. 
   socketio.to('client').emit('client:remove', doc);
 }

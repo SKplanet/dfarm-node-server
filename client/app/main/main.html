@@ -7,15 +7,15 @@
 <div id="main" class="container">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Status by Device</h1>
-      <ul class="nav nav-stacked">
+      <h1 class="page-header">Connected Devices</h1>
+      <ul class="nav nav-pills nav-stacked">
         <li data-ng-repeat-start="device in devices">
           <a href="devices/{{device.serial}}" tooltip="{{device.info}}">
             {{device.name}} 
             <span class="label state" data-ng-class="{'label-warning': device.whoused, 'label-success': !device.whoused}"><i class="fa" data-ng-class="{'fa-check': !!device.whoused}"> {{device.whoused ? "in use" : "available"}}</i></span>
             <span data-ng-repeat="tag in device.tags">[{{tag}}] </span>
             <span> {{device.ip}}</span>
-            <button type="button" class="close" data-ng-click="deleteDevice(device)">&times;</button>
+            <!-- <button type="button" class="close" data-ng-click="deleteDevice(device)">&times;</button> -->
           </a>
         </li>
         <div ng-if="false" data-ng-repeat-end></div>
@@ -25,14 +25,17 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Connented Client</h1>
+      <h1 class="page-header">Connected Clients</h1>
       <ul class="list-group">
         <li class="list-group-item" ng-repeat="client in clients">
-            <span>{{client.connectedAt}}</span>
+            <span>{{client.dispConnDate}}</span>
             <span> | {{client.type}} | </span>
             <span>{{client.ip}}</span>
+            <span ng-if="client.type!='web'">| {{client.deviceName}}  
+              <span class="label state" data-ng-class="{'label-warning': client.deviceName, 'label-success': !client.deviceName}"><i class="fa" data-ng-class="{'fa-check': !!client.deviceName}"> {{client.deviceName ? "in use" : "waiting"}}</i></span>
+              <button ng-if="client.deviceName" type="button" class="close" data-ng-click="deleteClient(client)">&times;</button>
+            </span>
             
-            <button type="button" class="close" data-ng-click="deleteClient(client)">&times;</button>
         </li>
       </ul>
     </div>

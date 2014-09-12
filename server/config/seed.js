@@ -9,6 +9,10 @@ var Device = require('../api/device/device.model');
 var Client = require('../api/client/client.model');
 var User = require('../api/user/user.model');
 
+Device.find({}).remove(function(){
+  
+});
+
 Client.find({}).remove(function(){
   
 });
@@ -32,14 +36,8 @@ User.find({}).remove(function() {
 });
 
 Device.find({}, function(err, devices){
-
   devices.forEach(function(device){
-
     device.whoused = '';
     device.save();
-
   });
-
-
-
 });

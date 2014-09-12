@@ -6,15 +6,20 @@
 
 var config = require('./environment');
 var Client = require('../api/client/client.model');
+var scheduler = require('../components/jenkins-scheduler');
 var ip = require('ip');
 
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
-  //require('../components/jenkins-scheduler').unregister(socket);
 
   Client.findOne({ id : socket.id }, function(err, client){
     if( err) console.log(err);
-    client.remove();
+
+    if(client){
+
+      console.log("[socketio] client socket-session removed = ", client, socket.id)
+      client.remove();  
+    }
   });
 
 }
@@ -30,11 +35,11 @@ function onConnect(socket) {
   
   if( userAgent.match(/java/i) ){
     socket.connectedTo = "jenkins-plugin";
-    require('../components/jenkins-scheduler').register(socket);
+    scheduler.register(socket);
   } 
   else if( userAgent.match(/node/i) ){
     socket.connectedTo = "node-test-client";
-    require('../components/jenkins-scheduler').register(socket);
+    scheduler.register(socket);
   } 
   else{
     socket.connectedTo = "web";

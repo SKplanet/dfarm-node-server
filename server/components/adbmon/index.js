@@ -3,7 +3,7 @@
 var adb = require('adbkit');
 var client = adb.createClient();
 var Device = require('../../api/device/device.model');
-var basePort = 6667;
+var basePort = 6668;
 
 function startTcpUsbBridge(serial) {
 
