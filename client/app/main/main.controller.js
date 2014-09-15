@@ -8,8 +8,6 @@ angular.module('devicefarmApp')
       socket.syncUpdates('device', $scope.devices);
     });
 
-    
-    
     $http.get('/api/clients').success(function(clients){
 
       $scope.clients = clients;

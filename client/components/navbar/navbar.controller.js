@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('devicefarmApp')
-  .controller('NavbarCtrl', function ($scope, $location, Auth) {
+  .controller('NavbarCtrl', function ($rootScope, $scope, $location, Auth) {
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
@@ -10,7 +10,7 @@ angular.module('devicefarmApp')
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = Auth.isAdmin;
-    $scope.getCurrentUser = Auth.getCurrentUser;
+    $rootScope.user = Auth.getCurrentUser();
 
     $scope.logout = function() {
       Auth.logout();

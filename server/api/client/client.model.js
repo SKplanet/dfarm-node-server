@@ -5,8 +5,10 @@ var mongoose = require('mongoose'),
 
 var ClientSchema = new Schema({
   id : {type:String, unique: true},
+  jobid: {type:String},
+  state: {type:String, default:''},
   type: String,
-  ip : String,
+  ip: String,
   deviceName: String,
   connectedAt: Date
 });

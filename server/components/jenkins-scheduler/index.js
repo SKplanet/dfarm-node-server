@@ -28,24 +28,50 @@ function onJenDevice(data) {
   var query = {whoused:''};
   var socket = this;
 
-  if( data && data.tag ){
+  data = JSON.parse(data||'{}');
+
+  console.log("[jenkins] jen_device ", data);
+  console.log("[jenkins] jen_device ", data.id);
+
+  if( !data.id ){
+    console.log("[jenkins-scheduler] It is not a vaild jenkins client!!");
+    socket.disconnect();
+    return;
+  }
+
+
+  if( data.tag ){
     query.tags = {$elemMatch: {$in: data.tag.split(",")} };  
   } 
 
-  Device.findOne(query, function (err, device) {
- 
-    if(device){
-      
-      assignDevice(device, socket);
+  Client.findOneAndUpdate({id: socket.id}, {jobid:data.id}, function(){
 
-    }else{
+    Device.findOne({whoused: data.id}, function (err, device) {
+      if(device){
 
-      // there is no avilable device.
-      var index = _.indexOf(watingSocketQueue, socket);
-      if(index < 0){
-        watingSocketQueue.push(socket);
+        console.log("[jenkins-scheduler][warning] duplicated command!");
+
+      }else{
+
+        Device.findOne(query, function (err, device) {
+   
+          if(device){
+            
+            assignDevice(device, socket);
+
+          }else{
+
+            // there is no avilable device.
+            var index = _.indexOf(watingSocketQueue, socket);
+            if(index < 0){
+              watingSocketQueue.push(socket);
+            }
+          }
+
+        });
       }
-    }
+
+    });
 
   });
 } 
@@ -63,37 +89,44 @@ function assignDeviceFromQueue(device){
 
 
 function assignDevice(device, socket){
-  device.whoused = socket.id;
-  device.ip = socket.request.connection.remoteAddress || ip.address();
 
   assignDevicePort(socket.id, device.serial, device.port, function(success){
 
-    if(success){
+    if(!success){ return; }
 
+    Client.findOne({id: socket.id}, function(err, client){
+
+      if(!client){ return; }
+
+      device.whoused = client.jobid;
+      device.ip = socket.request.connection.remoteAddress || ip.address();
       socket.emit("svc_device", { ip:ip.address(), port:device.port, tags: device.tags });
       device.save(function(err){
          if (err) { return console.log('device saving error') }
       });
 
-      Client.findOne({id: socket.id}, function(err, client){
-
-        client.deviceName = device.name;
-        client.save(function(err){
-          if (err) { return console.log('client saving error') } 
-        });
-
+      client.deviceName = device.name;
+      client.state = 'in use';
+      client.save(function(err){
+        if (err) { return console.log('client saving error') } 
       });
 
-      WorkingSockets.push(socket);
+
+      // 워킹소켓에도 한번만 들어간다.
+      var index = _.indexOf(watingSocketQueue, socket);
+      if(index < 0){
+        WorkingSockets.push(socket);
+      }
 
       console.log("WorkingSockets : ", WorkingSockets.length);
-    }
 
-
+    });
   });
 }
 
-function onReleaseDevice(){
+function onReleaseDevice(message){
+
+  console.log(message);
 
   var socket = this;
 
@@ -104,41 +137,42 @@ function onReleaseDevice(){
     TcpUsbBridges[socket.id] = null;
   }
 
-  Device.findOne({whoused:socket.id}, function (err, device) {
+
+  Client.findOne({id:socket.id}, function(err, client){
+
+    if(err) { return console.log(err) }
+    if(!client) { return; }
+
+    Device.findOne({whoused:client.jobid}, function (err, device) {
+      if(err) { return console.log(err) }
+      if(!device) { return; }
   
-    if(device){
       device.whoused = ''; 
       device.ip = '';
-
       device.save(function(err){
         if (err) { return console.log('saving error') }
       });
 
-      Client.findOne({id: socket.id}, function(err, client){
 
-        if (err) { return console.log('no client find error', err) }
-
-        if(client){
-          client.deviceName = '';
-          client.save(function(err){
-            if (err) { return console.log('client saving error') } 
-          });
-        }
-
-      });
+      if(message === 'jen_out'){
+        client.deviceName = '';
+        client.jobid = '';
+        client.state = 'wating';
+        client.save(function(err){
+          if (err) { return console.log('client saving error') } 
+        });
+      }
 
       // 워킹 소켓에서 제거한다.
-      var index = _.indexOf(WorkingSockets, function(wsoc){
-        return wsoc.id === socket.id
-      });
-      if(index){
-        WorkingSockets.slice(index, 1);  
+      var index = _.indexOf(WorkingSockets, socket);
+      if(index > -1){
+        WorkingSockets.splice(index, 1);  
       }
-      
-
-    }
+    });
 
   });
+
+ 
 }
 
 function assignDevicePort(socketid, serial, port, callback){
@@ -182,10 +216,10 @@ function registerEvent(socket){
 
   socket.on('jen_device', onJenDevice.bind(socket));
   socket.on('jen_out', function(){
-    onReleaseDevice.call(socket)
+    onReleaseDevice.call(socket, 'jen_out');
   });
   socket.on('disconnect', function(){
-    onReleaseDevice.call(socket)
+    onReleaseDevice.call(socket, 'disconnect');
   });
   socket.on('state', printWatingQueueState);
 }
