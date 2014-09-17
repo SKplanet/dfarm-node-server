@@ -3,9 +3,9 @@
 angular.module('devicefarmApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('state', {
-        url: '/state',
-        templateUrl: 'app/state/state.html',
+      .state('useage', {
+        url: '/useage',
+        templateUrl: 'app/useage/useage.html',
         controller: 'StateCtrl'
       });
   });

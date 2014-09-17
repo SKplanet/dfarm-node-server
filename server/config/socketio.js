@@ -16,8 +16,6 @@ function onDisconnect(socket) {
     if( err) console.log(err);
 
     if(client){
-
-      console.log("[socketio] client socket-session removed = ", client, socket.id)
       client.remove();  
     }
   });
@@ -91,6 +89,7 @@ module.exports = function (socketio) {
   });
 
   // Insert sockets below
+  require('../api/useage/useage.socket').register(socketio);
   require('../api/client/client.socket').register(socketio);
   require('../api/device/device.socket').register(socketio);
 };

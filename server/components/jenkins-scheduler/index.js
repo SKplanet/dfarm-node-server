@@ -7,6 +7,7 @@
 
 var Device = require('../../api/device/device.model');
 var Client = require('../../api/client/client.model');
+var useageLogger = require('../../components/useage-logger');
 var watingSocketQueue = [];
 var WorkingSockets = [];
 var adb = require('adbkit');
@@ -87,16 +88,19 @@ function assignDeviceFromQueue(device){
   printWatingQueueState();
 }
 
-
 function assignDevice(device, socket){
 
   assignDevicePort(socket.id, device.serial, device.port, function(success){
 
     if(!success){ return; }
 
+    // 디바이스 사용로그에 시작 시간을 기록한다.
+
     Client.findOne({id: socket.id}, function(err, client){
 
       if(!client){ return; }
+
+      useageLogger.record(device, client);
 
       device.whoused = client.jobid;
       device.ip = socket.request.connection.remoteAddress || ip.address();

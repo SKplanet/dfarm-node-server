@@ -49,7 +49,7 @@ function installSupportingTool(device){
       return client.install(device.id, apk);
   })
   .then(function() {
-    console.log('Installed %s on connected device(%s)', apk, device.id);
+    console.log('[adbmon] Installed %s on connected device(%s)', apk, device.id);
   })
   .catch(function(err) {
     console.error('Something went wrong:', err.stack);
@@ -66,9 +66,7 @@ module.exports = function startTrackingDevice(){
         startTcpUsbBridge(serial);
         console.log('[adbmon] Device %s was plugged in', serial);
 
-
         installSupportingTool(device);
-
       });
 
       tracker.on('remove', function (device) {
