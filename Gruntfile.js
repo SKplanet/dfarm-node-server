@@ -40,9 +40,9 @@ module.exports = function (grunt) {
           stderr: true 
         },
         command: [
+          'git reset --hard',
           'git pull',
-          'npm update',
-          'bower install',
+          'bower install'
         ].join('&&')
       },
       restart: {
