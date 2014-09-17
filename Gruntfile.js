@@ -41,7 +41,7 @@ module.exports = function (grunt) {
         },
         command: [
           'git pull',
-          'npm install',
+          'npm update',
           'bower install',
         ].join('&&')
       },
