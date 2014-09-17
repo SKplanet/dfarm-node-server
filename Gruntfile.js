@@ -33,6 +33,20 @@ module.exports = function (grunt) {
       client: require('./bower.json').appPath || 'client',
       dist: 'dist'
     },
+    shell: {
+      deploy: {
+        options: { 
+          stdout: true,
+          stderr: true 
+        },
+        command: [
+          'git pull',
+          'npm install',
+          'bower install',
+          'forever restartall'
+        ].join('&&')
+      }
+    },
     express: {
       options: {
         port: process.env.PORT || 9000
@@ -654,4 +668,6 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+  grunt.registerTask('release', ['shell:deploy']);
 };
