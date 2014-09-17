@@ -43,6 +43,14 @@ module.exports = function (grunt) {
           'git pull',
           'npm install',
           'bower install',
+        ].join('&&')
+      },
+      restart: {
+        options: { 
+          stdout: true,
+          stderr: true 
+        },
+        command: [
           'forever restartall'
         ].join('&&')
       }
@@ -669,5 +677,5 @@ module.exports = function (grunt) {
     'build'
   ]);
 
-  grunt.registerTask('release', ['shell:deploy']);
+  grunt.registerTask('release', ['shell:deploy','build','shell:restart']);
 };
