@@ -3,6 +3,7 @@
 var adb = require('adbkit');
 var client = adb.createClient();
 var Device = require('../../api/device/device.model');
+var Q = require('q');
 var basePort = 6668;
 
 function startTcpUsbBridge(serial) {
@@ -40,6 +41,22 @@ function startTcpUsbBridge(serial) {
   }, 1000);
 }
 
+function installSupportingTool(device){
+  
+  var apk = 'download/app-debug.apk';
+
+  Q.fcall(function() {
+      return client.install(device.id, apk);
+  })
+  .then(function() {
+    console.log('Installed %s on connected device(%s)', apk, device.id);
+  })
+  .catch(function(err) {
+    console.error('Something went wrong:', err.stack);
+  })
+
+}
+
 module.exports = function startTrackingDevice(){
   client.trackDevices()
     .then(function (tracker) {
@@ -47,7 +64,11 @@ module.exports = function startTrackingDevice(){
       tracker.on('add', function (device) {
         var serial = device.id;
         startTcpUsbBridge(serial);
-        console.log('[adbmon] Device %s was plugged in', serial)
+        console.log('[adbmon] Device %s was plugged in', serial);
+
+
+        installSupportingTool(device);
+
       });
 
       tracker.on('remove', function (device) {
