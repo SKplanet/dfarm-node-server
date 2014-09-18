@@ -1,0 +1,12 @@
+{
+  "intervalTime": 10000,
+  "git": {
+    "repository": "http://miconblog@yobi.skplanet.com/SQE/devicefarm",
+    "branch": "master",
+    "HEAD": "58db462d5df5a13f98143ec9dcc5a8ef145cd844"
+  },
+  "dist": {
+    "command": "./start.sh",
+    "cwd": "./"
+  }
+}
