@@ -27,6 +27,7 @@ function onSave(socketio, doc, cb) {
     ip : doc.ip,
     type: doc.type,
     state: doc.state,
+    jobid: doc.jobid,
     deviceName: doc.deviceName,
     dispConnDate: moment(doc.connectedAt).format('YYYY-MM-DD hh:mm:ss')
   });

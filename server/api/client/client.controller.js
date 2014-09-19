@@ -18,6 +18,7 @@ exports.index = function(req, res) {
         ip : client.ip,
         type: client.type,
         state: client.state,
+        jobid: client.jobid,
         dispConnDate: moment(client.connectedAt).format('YYYY-MM-DD hh:mm:ss')
       });
     });

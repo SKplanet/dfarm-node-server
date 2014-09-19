@@ -130,24 +130,22 @@ function assignDevice(device, socket){
 
 function onReleaseDevice(message){
 
-  console.log(message);
-
   var socket = this;
+  var serial = 0;
 
   if( TcpUsbBridges[socket.id] ) {
 
     console.log('[TcpUsbBridges] close port:', TcpUsbBridges[socket.id].client.options.port);
+    serial = TcpUsbBridges[socket.id].serial;
     TcpUsbBridges[socket.id].close();
     TcpUsbBridges[socket.id] = null;
   }
 
-
   Client.findOne({id:socket.id}, function(err, client){
 
     if(err) { return console.log(err) }
-    if(!client) { return; }
 
-    Device.findOne({whoused:client.jobid}, function (err, device) {
+    Device.findOne({serial:serial}, function (err, device) {
       if(err) { return console.log(err) }
       if(!device) { return; }
   

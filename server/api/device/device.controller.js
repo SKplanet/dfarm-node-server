@@ -7,7 +7,21 @@ var Device = require('./device.model');
 exports.index = function(req, res) {
   Device.find(function (err, devices) {
     if(err) { return handleError(res, err); }
-    return res.json(200, devices);
+
+    var result = [];
+
+    devices.forEach(function(device, i, context){
+      result.push({
+        _id: device._id,
+        name : device.name,
+        port : device.port,
+        serial: device.serial,
+        whoused: device.whoused,
+        tags: device.tags
+      });
+    });
+
+    return res.json(200, result);
   });
 };
 
