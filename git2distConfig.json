@@ -6,7 +6,7 @@
     "HEAD": "58db462d5df5a13f98143ec9dcc5a8ef145cd844"
   },
   "dist": {
-    "command": "./start.sh",
+    "command": "./restart.sh",
     "cwd": "./"
   }
 }
