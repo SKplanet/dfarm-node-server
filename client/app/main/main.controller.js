@@ -5,6 +5,7 @@ angular.module('devicefarmApp')
 
     $http.get('/api/devices').success(function(devices) {
       $scope.devices = devices;
+      console.log(devices);
       socket.syncUpdates('device', $scope.devices);
     });
 

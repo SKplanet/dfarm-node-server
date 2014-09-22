@@ -9,8 +9,10 @@ var Device = require('../api/device/device.model');
 var Client = require('../api/client/client.model');
 var User = require('../api/user/user.model');
 
-Device.find({}).remove(function(){
-  
+Device.update({}, {isConnected: false}, function(err, numberAffected, raw) {
+  if (err) return handleError(err);
+  console.log('The number of updated documents was %d', numberAffected);
+  console.log('The raw response from Mongo was ', raw);
 });
 
 Client.find({}).remove(function(){

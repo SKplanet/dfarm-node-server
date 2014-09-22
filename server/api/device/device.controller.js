@@ -5,7 +5,7 @@ var Device = require('./device.model');
 
 // Get list of devices
 exports.index = function(req, res) {
-  Device.find(function (err, devices) {
+  Device.find({isConnected: true}, function (err, devices) {
     if(err) { return handleError(res, err); }
 
     var result = [];
@@ -15,6 +15,7 @@ exports.index = function(req, res) {
         _id: device._id,
         name : device.name,
         port : device.port,
+        ip : device.ip,
         serial: device.serial,
         whoused: device.whoused,
         tags: device.tags

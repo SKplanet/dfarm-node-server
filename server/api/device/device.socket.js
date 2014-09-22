@@ -19,7 +19,12 @@ exports.register = function(socketio) {
 
 function onSave(socketio, doc, cb) {
   scheduler.notify('state:changed', doc);
-  socketio.to('device').emit('device:save', doc);
+
+  if(doc.isConnected){
+    socketio.to('device').emit('device:save', doc);  
+  }else{
+    socketio.to('device').emit('device:remove', doc);  
+  }
 }
 
 function onRemove(socketio, doc, cb) {

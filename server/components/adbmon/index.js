@@ -23,19 +23,47 @@ function startTcpUsbBridge(serial) {
           tags.push(networkType);
         }
 
-        Device.create({
-          name : deviceName,
-          port : assignedPort,
-          serial : serial,
-          tags : tags,
-        }, function(err, doc){
-          if(err){
-            console.log("[adbmon] ", err.err);
+        Device.findOne({serial: serial}, function(err, device){
+
+          if(device){
+            device.isConnected = true;
+            device.save();
+
           }else{
-            console.log("[adbmon] added device to DB");  
+
+            Device.create({
+              name : deviceName,
+              port : assignedPort,
+              serial : serial,
+              tags : tags,
+              isConnected: true
+            }, function(err, doc){
+              if(err){
+                console.log("[adbmon] ", err.err);
+              }else{
+                console.log("[adbmon] added device to DB");  
+              }
+              
+            });
+
           }
-          
+
         });
+
+        // Device.update({serial: serial},{
+        //   name : deviceName,
+        //   port : assignedPort,
+        //   serial : serial,
+        //   tags : tags,
+        //   isConnected: true
+        // }, {upsert: true}, function(err, doc){
+        //   if(err){
+        //     console.log("[adbmon] ", err.err);
+        //   }else{
+        //     console.log("[adbmon] added device to DB");  
+        //   }
+          
+        // });
 
       });
   }, 1000);
@@ -72,11 +100,11 @@ module.exports = function startTrackingDevice(){
       tracker.on('remove', function (device) {
         console.log('[adbmon] Device %s was unplugged', device.id);
 
-        Device.find({serial:device.id}, function(error, data) {
+        Device.findOne({serial:device.id}, function(error, d) {
 
-          data.forEach(function(d){
-            d.remove();
-          });
+          d.isConnected = false;
+          d.save();
+
         });
       });
 

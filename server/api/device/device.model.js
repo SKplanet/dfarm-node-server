@@ -9,6 +9,7 @@ var DeviceSchema = new Schema({
   serial: {type:String, unique: true},
   whoused: {type:String, default: ''},
   ip : {type:String, default: ''},
+  isConnected : {type: Boolean, default: false},
   tags: [String] // device name, os version
 });
 

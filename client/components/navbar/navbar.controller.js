@@ -5,6 +5,9 @@ angular.module('devicefarmApp')
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
+    },{
+      'title': 'Device',
+      'link' : '/devices'
     }];
 
     $scope.isCollapsed = true;
