@@ -91,10 +91,15 @@ module.exports = function startTrackingDevice(){
 
       tracker.on('add', function (device) {
         var serial = device.id;
-        startTcpUsbBridge(serial);
-        console.log('[adbmon] Device %s was plugged in', serial);
+        var match = serial.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])/);
 
-        installSupportingTool(device);
+        if(!match){
+          startTcpUsbBridge(serial);
+          console.log('[adbmon] Device %s was plugged in', serial);
+          installSupportingTool(device);
+        }else{
+          console.log('[adbmon] IP Device %s is skipped!', serial);
+        }
       });
 
       tracker.on('remove', function (device) {

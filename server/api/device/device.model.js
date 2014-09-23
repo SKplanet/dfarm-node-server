@@ -10,7 +10,12 @@ var DeviceSchema = new Schema({
   whoused: {type:String, default: ''},
   ip : {type:String, default: ''},
   isConnected : {type: Boolean, default: false},
-  tags: [String] // device name, os version
+  tags: [String], // device name, os version
+  photoUrl: String,
+  manager: {
+    name: String,
+    team: String
+  }
 });
 
 /**
