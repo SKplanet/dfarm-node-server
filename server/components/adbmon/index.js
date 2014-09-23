@@ -103,13 +103,14 @@ module.exports = function startTrackingDevice(){
       });
 
       tracker.on('remove', function (device) {
+
         console.log('[adbmon] Device %s was unplugged', device.id);
 
         Device.findOne({serial:device.id}, function(error, d) {
-
-          d.isConnected = false;
-          d.save();
-
+          if(d){
+            d.isConnected = false;
+            d.save();  
+          }
         });
       });
 
