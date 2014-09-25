@@ -7,14 +7,13 @@ var DeviceSchema = new Schema({
   name: String,
   port: Number,
   serial: {type:String, unique: true},
-  whoused: {type:String, default: ''},
-  ip : {type:String, default: ''},
+  jobid: {type:String, default: ''},
   isConnected : {type: Boolean, default: false},
   tags: [String], // device name, os version
   photoUrl: String,
   manager: {
-    name: String,
-    team: String
+    name: {type:String, default:'이름을 지정해주세요.'},
+    team: {type:String, default:'팀을 지정해주세요.'}
   }
 });
 

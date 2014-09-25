@@ -7,7 +7,8 @@
 
 var Device = require('../../api/device/device.model');
 var Client = require('../../api/client/client.model');
-var useageLogger = require('../../components/useage-logger');
+var deviceLogger = require('../../components/device-logger');
+var queryMaker = require('./queryMaker');
 var watingSocketQueue = [];
 var WorkingSockets = [];
 var adb = require('adbkit');
@@ -15,6 +16,22 @@ var ip = require('ip');
 var client = adb.createClient();
 var TcpUsbBridges = [];
 var _ = require('lodash');
+
+function registerEvent(socket){
+
+  socket.on('jen_device', function(data){
+    data = JSON.parse(data||'{}');
+    onJenDevice.call(null, socket, data);
+  });
+  socket.on('jen_out', function(){
+    onReleaseDevice.call(null, socket, 'jen_out');
+  });
+  socket.on('disconnect', function(){
+    onReleaseDevice.call(null, socket, 'disconnect');
+  });
+  socket.on('state', printWatingQueueState);
+}
+
 
 /**
  * 클라이언트로부터 jen_device 요청을 받으면, 
@@ -24,37 +41,31 @@ var _ = require('lodash');
  * 3. 해당 디바이스와 클라이언트를 연결하는 포트를 열어준다.  
  * 
  */ 
-function onJenDevice(data) {
+function onJenDevice(socket, data) {
 
-  var query = {whoused:''};
-  var socket = this;
-
-  data = JSON.parse(data||'{}');
-
-  console.log("[jenkins] jen_device ", data);
-  console.log("[jenkins] jen_device ", data.id);
-
-  if( !data.id ){
-    console.log("[jenkins-scheduler] It is not a vaild jenkins client!!");
+  var query = {jobid:'', isConnected:true}
+  if( !queryMaker.generate(query, data) ){
     socket.disconnect();
     return;
   }
 
+  // 1. 일단 jobid를 client에 설정한다.
+  Client.findOneAndUpdate({id: socket.id}, {jobid:data.id}, function(err, client){
 
-  if( data.tag ){
-    query.tags = {$elemMatch: {$in: data.tag.split(",")} };  
-  } 
+    if (err){ console.log(err); }
 
-  Client.findOneAndUpdate({id: socket.id}, {jobid:data.id}, function(){
-
-    Device.findOne({whoused: data.id}, function (err, device) {
+    // 2. 혹시나 중복 요청은 아닌지 검사한다.
+    Device.findOne({jobid: data.id}, function (err, device) {
       if(device){
 
         console.log("[jenkins-scheduler][warning] duplicated command!");
 
       }else{
 
+        // 3. 중복 요청이 아니므로 할당을 시도한다.
         Device.findOne(query, function (err, device) {
+
+          deviceLogger.record('wating', device, client);
    
           if(device){
             
@@ -94,17 +105,18 @@ function assignDevice(device, socket){
 
     if(!success){ return; }
 
-    // 디바이스 사용로그에 시작 시간을 기록한다.
-
     Client.findOne({id: socket.id}, function(err, client){
 
       if(!client){ return; }
 
-      useageLogger.record(device, client);
-
-      device.whoused = client.jobid;
-      device.ip = socket.request.connection.remoteAddress || ip.address();
-      socket.emit("svc_device", { ip:ip.address(), port:device.port, tags: device.tags });
+      device.jobid = client.jobid;
+      //device.ip = socket.request.connection.remoteAddress || ip.address();
+      socket.emit("svc_device", { 
+        ip: ip.address(), 
+        url: "http://"+ ip.address() + ":9000/devices/" + device._id,
+        port:device.port, 
+        tags: device.tags 
+      });
       device.save(function(err){
          if (err) { return console.log('device saving error') }
       });
@@ -115,6 +127,8 @@ function assignDevice(device, socket){
         if (err) { return console.log('client saving error') } 
       });
 
+      // 디바이스 사용로그에 시작 시간을 기록한다.
+      deviceLogger.record('assigned', device, client);
 
       // 워킹소켓에도 한번만 들어간다.
       var index = _.indexOf(watingSocketQueue, socket);
@@ -128,9 +142,7 @@ function assignDevice(device, socket){
   });
 }
 
-function onReleaseDevice(message){
-
-  var socket = this;
+function onReleaseDevice(socket, message){
   var serial = 0;
 
   if( TcpUsbBridges[socket.id] ) {
@@ -148,9 +160,10 @@ function onReleaseDevice(message){
     Device.findOne({serial:serial}, function (err, device) {
       if(err) { return console.log(err) }
       if(!device) { return; }
+
+      deviceLogger.record('released', device, client);
   
-      device.whoused = ''; 
-      device.ip = '';
+      device.jobid = ''; 
       device.save(function(err){
         if (err) { return console.log('saving error') }
       });
@@ -214,18 +227,6 @@ function assignDevicePort(socketid, serial, port, callback){
 
 }
 
-function registerEvent(socket){
-
-  socket.on('jen_device', onJenDevice.bind(socket));
-  socket.on('jen_out', function(){
-    onReleaseDevice.call(socket, 'jen_out');
-  });
-  socket.on('disconnect', function(){
-    onReleaseDevice.call(socket, 'disconnect');
-  });
-  socket.on('state', printWatingQueueState);
-}
-
 function printWatingQueueState(){
 
   if( watingSocketQueue.length > 0 ){
@@ -250,7 +251,7 @@ exports.notify = function(message, data){
 
   if(message === 'state:changed') {
 
-    if ( data.whoused === '' ){
+    if ( data.jobid === '' ){
       assignDeviceFromQueue(data);
     }
 

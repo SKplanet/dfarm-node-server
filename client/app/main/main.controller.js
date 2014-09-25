@@ -18,7 +18,6 @@ angular.module('devicefarmApp')
       
     })
     
-
     $scope.deleteDevice = function(device) {
       $http.delete('/api/devices/' + device._id);
     };

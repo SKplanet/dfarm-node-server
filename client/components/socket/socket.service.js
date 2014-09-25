@@ -94,6 +94,10 @@ angular.module('devicefarmApp')
       syncUpdates: function (modelName, array, cb) {
         cb = cb || angular.noop;
  
+
+        //console.log('====>', modelName, array);
+        //array.reverse();
+
         watches.push(array);
         actions.push(new Action(modelName, array, cb).sync());
  

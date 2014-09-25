@@ -15,9 +15,8 @@ exports.index = function(req, res) {
         _id: device._id,
         name : device.name,
         port : device.port,
-        ip : device.ip,
         serial: device.serial,
-        whoused: device.whoused,
+        jobid: device.jobid,
         tags: device.tags
       });
     });
@@ -49,7 +48,9 @@ exports.update = function(req, res) {
   Device.findById(req.params.id, function (err, device) {
     if (err) { return handleError(res, err); }
     if(!device) { return res.send(404); }
+
     var updated = _.merge(device, req.body);
+    updated.tags = req.body.tags;
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, device);

@@ -46,16 +46,18 @@ function onConnect(socket) {
     socket.connectedTo = 'web';
   }
 
-  Client.create({
-    id : socket.id,
-    jobid: '',
-    state: state,
-    type : socket.connectedTo,
-    ip : socket.request.connection.remoteAddress || ip.address(),
-    connectedAt : socket.connectedAt
-  }, function(err){
-    if(err) console.log('-------------> ', err)
-  });
+  if(socket.connectedTo !== 'web'){
+    Client.create({
+      id : socket.id,
+      jobid: '',
+      state: state,
+      type : socket.connectedTo,
+      ip : socket.request.connection.remoteAddress || ip.address(),
+      connectedAt : socket.connectedAt
+    }, function(err){
+      if(err) console.log('-------------> ', err)
+    });
+  }
 
   socket.on('join', function(room) {
     socket.join(room);
@@ -89,7 +91,7 @@ module.exports = function (socketio) {
   });
 
   // Insert sockets below
-  require('../api/useage/useage.socket').register(socketio);
+  require('../api/devicelog/devicelog.socket').register(socketio);
   require('../api/client/client.socket').register(socketio);
   require('../api/device/device.socket').register(socketio);
 };

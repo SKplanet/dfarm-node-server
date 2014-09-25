@@ -1,21 +1,44 @@
 'use strict';
 
 angular.module('devicefarmApp')
-.controller('DeviceDetailCtrl', function ($scope, $http, $location, $modal, $log) {
+.controller('DeviceDetailCtrl', function ($scope, $http, $location, $modal, $log, socket) {
 
   var id = $location.path().replace('/devices/','');
   $scope.isEditManagerName = false;
   $scope.isEditManagerTeam = false;
-  
 
   $http.get('/api/devices/' + id).success(function(device) {
     $scope.device = device;
-    console.log(device);
+
+    $http.get('/api/devicelogs/'+ device.serial, {params:{lastest:10}}).success(function(logs) {
+      $scope.logs = logs;
+      console.log(logs);
+      socket.syncUpdates('devicelog', $scope.logs, function(message, data){
+        console.log('devicelog: ', message, data);
+      })
+    });
+
   });
+
+  $scope.$on('$destroy', function () {
+    socket.unsyncUpdates('devicelog');
+  });
+
+  $scope.save = function(){
+
+    $http.put('/api/devices/' + id, $scope.device).success(function(){
+      $scope.isEditManagerName = false;
+      $scope.isEditManagerTeam = false;
+    });
+  };
+
 
   $scope.editManagerName = function(){
     $scope.isEditManagerName = true;
+  }
 
+  $scope.editManagerTeam = function(){
+    $scope.isEditManagerTeam = true;
   }
 
   $scope.openPhotoUrlEditor = function(size){
@@ -53,7 +76,52 @@ angular.module('devicefarmApp')
     }, function () {
       $log.info('Modal dismissed at: ' + new Date());
     });
+  };
 
-  }
+  $scope.openTagEditor = function(size){
+
+    var modalInstance = $modal.open({
+      templateUrl: 'tagEditModal',
+      controller: function ($scope, $modalInstance, device, tagText) {
+
+        $scope.device = device;
+        $scope.tagText = tagText
+
+        $scope.ok = function () {
+          var tags = this.tagText.split(',');
+
+          tags.forEach(function(s, i){
+            tags[i] = s.replace(/^\s+|\s+$/g, '')
+          });
+
+          $scope.device.tags = tags;
+
+          console.log($scope.device.tags);
+
+          $http.put('/api/devices/' + id, $scope.device).success(function(){
+            $modalInstance.close($scope);
+          });
+        };
+
+        $scope.cancel = function () {
+          $modalInstance.dismiss('cancel');
+        };
+      },
+      size: size,
+      resolve: {
+        device: function () {
+          return $scope.device;
+        },
+        tagText: function(){
+          return $scope.device.tags.join(", ");
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  };
   
 });

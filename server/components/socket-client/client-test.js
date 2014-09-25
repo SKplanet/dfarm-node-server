@@ -48,7 +48,7 @@ process.stdin.on('data', function (text) {
 
     if (text.match(/^jen_device/)) {
 
-      socket.emit('jen_device', S(text.replace(/jen_device/, "")).trim().s + '{"id":"android-test-sample+%2314", "tag":""}');
+      socket.emit('jen_device', S(text.replace(/jen_device/, "")).trim().s + '{"id":"android-test-sample+%2314", "tag":"SHV-E330S@4.4.2"}');
 
     }
 

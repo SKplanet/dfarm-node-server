@@ -21,16 +21,23 @@ exports.register = function(socketio) {
 
 // Mongo Hook for WebSocket
 function onSave(socketio, doc, cb) {
-  socketio.to('client').emit('client:save', {
-    _id: doc._id,
-    id : doc.id,
-    ip : doc.ip,
-    type: doc.type,
-    state: doc.state,
-    jobid: doc.jobid,
-    deviceName: doc.deviceName,
-    dispConnDate: moment(doc.connectedAt).format('YYYY-MM-DD hh:mm:ss')
-  });
+
+  if(doc.state === "in use"){
+    socketio.to('client').emit('client:remove', doc);
+
+  }else{
+
+    socketio.to('client').emit('client:save', {
+      _id: doc._id,
+      id : doc.id,
+      ip : doc.ip,
+      type: doc.type,
+      state: doc.state,
+      jobid: doc.jobid,
+      deviceName: doc.deviceName,
+      dispConnDate: moment(doc.connectedAt).format('YYYY-MM-DD hh:mm:ss')
+    });
+  }
 }
 
 function onRemove(socketio, doc, cb) {

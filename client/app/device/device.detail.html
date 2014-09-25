@@ -8,12 +8,13 @@
     <ul class="tags nav nav-pill nav-stacked">
       <li ng-repeat="tag in device.tags">{{tag}}</li>
     </ul>
+    <button ng-click='openTagEditor()'>태그 수정</button>
   </div>
-  <div class="float-box manager">
-    <h4 ng-click="editManagerName()">홍길동</h4>
-    <input ng-class="{'hide': !isEditManagerName }" ng-model="device.manager.name"/>
-    <div>SQE팀</div>
-    <input class="hide" ng-model="device.manager.team"/>
+  <div class="float-box managerInfo">
+    <h4 ng-class="{'hide': isEditManagerName }">{{device.manager.name}} <i class="fa fa-edit" ng-click="editManagerName()"></i></h4>
+    <input ng-class="{'hide': !isEditManagerName }" ng-model="device.manager.name" ng-blur="save()"/>
+    <div ng-class="{'hide': isEditManagerTeam}">{{device.manager.team}}<i class="fa fa-edit" ng-click="editManagerTeam()"></i></div>
+    <input ng-class="{'hide': !isEditManagerTeam }" class="hide" ng-model="device.manager.team"ng-blur="save()" />
   </div>
 
   <script type="text/ng-template" id="photoUrlEditModal">
@@ -28,4 +29,27 @@
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
   </script>
+  <script type="text/ng-template" id="tagEditModal">
+    <div class="modal-header">
+        <h3 class="modal-title">태그 수정</h3>
+    </div>
+    <div class="modal-body">
+      <input type='text' class='form-control' ng-model='tagText'/> 
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+  </script>
+
+  <div class="history">
+    <h2>History</h2>
+    <ul>
+      <li ng-repeat="log in logs | orderBy:'-dispDate'">
+        {{log.dispDate}} - {{log.state}} - {{log.jenkinsJobUrl}}
+      </li>
+    </ul>
+  </div>
+  
+
 </div>

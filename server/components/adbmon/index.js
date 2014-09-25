@@ -3,12 +3,13 @@
 var adb = require('adbkit');
 var client = adb.createClient();
 var Device = require('../../api/device/device.model');
+var deviceLogger = require('../../components/device-logger');
 var Q = require('q');
 var basePort = 6668;
 
 function startTcpUsbBridge(serial) {
 
-  var assignedPort = basePort++
+  var assignedPort = basePort++; // TODO: AutoIncrement로 변경해야함. 
   setTimeout(function () {
 
     client.getProperties(serial)
@@ -50,21 +51,6 @@ function startTcpUsbBridge(serial) {
 
         });
 
-        // Device.update({serial: serial},{
-        //   name : deviceName,
-        //   port : assignedPort,
-        //   serial : serial,
-        //   tags : tags,
-        //   isConnected: true
-        // }, {upsert: true}, function(err, doc){
-        //   if(err){
-        //     console.log("[adbmon] ", err.err);
-        //   }else{
-        //     console.log("[adbmon] added device to DB");  
-        //   }
-          
-        // });
-
       });
   }, 1000);
 }
@@ -77,10 +63,11 @@ function installSupportingTool(device){
       return client.install(device.id, apk);
   })
   .then(function() {
+
     console.log('[adbmon] Installed %s on connected device(%s)', apk, device.id);
   })
   .catch(function(err) {
-    console.error('Something went wrong:', err.stack);
+    console.error('[adbmon][unexpected error catch] maybe adb problem.', err);
   })
 
 }
@@ -95,6 +82,9 @@ module.exports = function startTrackingDevice(){
 
         if(!match){
           startTcpUsbBridge(serial);
+
+          deviceLogger.recordStart('plugged in', device);
+
           console.log('[adbmon] Device %s was plugged in', serial);
           installSupportingTool(device);
         }else{
@@ -104,6 +94,7 @@ module.exports = function startTrackingDevice(){
 
       tracker.on('remove', function (device) {
 
+        deviceLogger.recordEnd('unplugged', device);
         console.log('[adbmon] Device %s was unplugged', device.id);
 
         Device.findOne({serial:device.id}, function(error, d) {

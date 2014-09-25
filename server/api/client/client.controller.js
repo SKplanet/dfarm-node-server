@@ -6,7 +6,7 @@ var Client = require('./client.model');
 
 // Get list of clients
 exports.index = function(req, res) {
-  Client.find(function (err, clients) {
+  Client.find({jobid:''}).sort('connectedAt').exec(function (err, clients) {
     if(err) { return handleError(res, err); }
 
     var result = [];
