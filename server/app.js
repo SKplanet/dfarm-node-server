@@ -19,7 +19,20 @@ if(config.seedDB) { require('./config/seed'); }
 // Setup server
 var app = express();
 var server = require('http').createServer(app);
-var socketio = require('socket.io').listen(server);
+var socketio = require('socket.io')({
+  'browser client gzip': true,
+  'browser client etag': true,
+  'browser client minification': true,
+  'log level': 1,
+  'transports':[
+    'websocket'
+  , 'flashsocket'
+  , 'htmlfile'
+  , 'xhr-polling'
+  , 'jsonp-polling'
+  ]
+
+}).listen(server);
 
 require('./config/socketio')(socketio);
 require('./config/express')(app);

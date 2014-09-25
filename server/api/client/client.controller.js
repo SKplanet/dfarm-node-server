@@ -6,21 +6,13 @@ var Client = require('./client.model');
 
 // Get list of clients
 exports.index = function(req, res) {
-  Client.find({jobid:''}).sort('connectedAt').exec(function (err, clients) {
+  Client.find({state:'waiting'}).sort('connectedAt').exec(function (err, clients) {
     if(err) { return handleError(res, err); }
 
     var result = [];
 
     clients.forEach(function(client, i, context){
-      result.push({
-        _id: client._id,
-        id : client.id,
-        ip : client.ip,
-        type: client.type,
-        state: client.state,
-        jobid: client.jobid,
-        dispConnDate: moment(client.connectedAt).format('YYYY-MM-DD hh:mm:ss')
-      });
+      result.push( client.toObject() );
     });
 
     return res.json(200, result);

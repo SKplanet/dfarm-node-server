@@ -28,8 +28,9 @@
             <span>{{client.dispConnDate}}</span>
             <span> | {{client.type}} | </span>
             <span>{{client.ip}}</span>
-            <span ng-if="client.type!='web'">| {{client.deviceName}} {{client.jobid}} 
+            <span>| {{client.deviceName}}
               <span class="label state" data-ng-class="{'label-warning': client.state==='in use', 'label-success': !client.deviceName}"><i class="fa" data-ng-class="{'fa-check': client.state==='in use'}"> {{client.state}}</i> </span>
+              <a href="{{client.jobid}}">{{client.requestTag}}</a>
               <button ng-if="(client.state==='in use') && (user.role === 'admin')" type="button" class="close" data-ng-click="deleteClient(client)">&times;</button>
             </span>
         </li>

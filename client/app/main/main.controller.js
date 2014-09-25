@@ -12,6 +12,8 @@ angular.module('devicefarmApp')
     $http.get('/api/clients').success(function(clients){
 
       $scope.clients = clients;
+
+      console.log('clients', clients);
       socket.syncUpdates('client', $scope.clients, function(message, data){
         console.log('clients: ', message, data);
       });

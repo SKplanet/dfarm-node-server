@@ -35,7 +35,8 @@ function onSave(socketio, doc, cb) {
       state: doc.state,
       jobid: doc.jobid,
       deviceName: doc.deviceName,
-      dispConnDate: moment(doc.connectedAt).format('YYYY-MM-DD hh:mm:ss')
+      requestTag: doc.requestTag,
+      dispConnDate: doc.dispConnDate
     });
   }
 }

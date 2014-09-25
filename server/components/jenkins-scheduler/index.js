@@ -9,7 +9,7 @@ var Device = require('../../api/device/device.model');
 var Client = require('../../api/client/client.model');
 var deviceLogger = require('../../components/device-logger');
 var queryMaker = require('./queryMaker');
-var watingSocketQueue = [];
+var waitingSocketQueue = [];
 var WorkingSockets = [];
 var adb = require('adbkit');
 var ip = require('ip');
@@ -43,16 +43,22 @@ function registerEvent(socket){
  */ 
 function onJenDevice(socket, data) {
 
-  var query = {jobid:'', isConnected:true}
+  var query = {jobid:'', isConnected:true};
   if( !queryMaker.generate(query, data) ){
     socket.disconnect();
     return;
   }
 
-  // 1. 일단 jobid를 client에 설정한다.
+  // 1. 일단 jobid를 client에 설정하고,..
   Client.findOneAndUpdate({id: socket.id}, {jobid:data.id}, function(err, client){
 
     if (err){ console.log(err); }
+
+    if(client){
+      // 1-1. 클라이언트에 태그 정보를 기록 한다.
+      client.requestTag= data.tag;
+      client.save();  
+    }
 
     // 2. 혹시나 중복 요청은 아닌지 검사한다.
     Device.findOne({jobid: data.id}, function (err, device) {
@@ -71,10 +77,9 @@ function onJenDevice(socket, data) {
 
           }else{
 
-            deviceLogger.record('waiting', data.tag, client);
-            var index = _.indexOf(watingSocketQueue, socket);
+            var index = _.indexOf(waitingSocketQueue, socket);
             if(index < 0){
-              watingSocketQueue.push(socket);
+              waitingSocketQueue.push(socket);
             }
           }
 
@@ -87,7 +92,7 @@ function onJenDevice(socket, data) {
 } 
 
 function assignDeviceFromQueue(device){
-  var socket = watingSocketQueue.shift();
+  var socket = waitingSocketQueue.shift();
 
   if(socket){
      
@@ -125,10 +130,14 @@ function assignDevice(device, socket){
       });
 
       // 디바이스 사용로그에 시작 시간을 기록한다.
-      deviceLogger.record('assigned', device, client);
+      deviceLogger.record('finding device', device, client.requestTag);
+      setTimeout(function(){
+        deviceLogger.record('assigned', device, client);  
+      }, 10);
+      
 
       // 워킹소켓에도 한번만 들어간다.
-      var index = _.indexOf(watingSocketQueue, socket);
+      var index = _.indexOf(waitingSocketQueue, socket);
       if(index < 0){
         WorkingSockets.push(socket);
       }
@@ -169,7 +178,7 @@ function onReleaseDevice(socket, message){
       if(message === 'jen_out'){
         client.deviceName = '';
         client.jobid = '';
-        client.state = 'wating';
+        client.state = 'waiting';
         client.save(function(err){
           if (err) { return console.log('client saving error') } 
         });
@@ -226,9 +235,9 @@ function assignDevicePort(socketid, serial, port, callback){
 
 function printWatingQueueState(){
 
-  if( watingSocketQueue.length > 0 ){
-    console.log("\n\n[WatingQUEUE State] - %d clients wating", watingSocketQueue.length); 
-    watingSocketQueue.forEach(function(socket, i){
+  if( waitingSocketQueue.length > 0 ){
+    console.log("\n\n[WatingQUEUE State] - %d clients waiting", waitingSocketQueue.length); 
+    waitingSocketQueue.forEach(function(socket, i){
       console.log('| seq | %d | %s |', i, socket.id)
     });
     console.log("--------------\n\n"); 
@@ -244,10 +253,10 @@ exports.remove = function(socket){
     }
   }
 
-  for(i=0; i<watingSocketQueue.length; ++i){
-    if(watingSocketQueue[i].id === socket.id){
-      watingSocketQueue[i].disconnect();
-      watingSocketQueue.splice(i,1);
+  for(i=0; i<waitingSocketQueue.length; ++i){
+    if(waitingSocketQueue[i].id === socket.id){
+      waitingSocketQueue[i].disconnect();
+      waitingSocketQueue.splice(i,1);
     }
   }
 };

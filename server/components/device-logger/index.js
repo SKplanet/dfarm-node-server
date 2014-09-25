@@ -33,6 +33,13 @@ exports.record = function(state, device, client){
       });
       break;
 
+    case 'finding device':
+      DeviceLog.create({
+        deviceId: device.serial,
+        state: state + ' - ' + client
+      });
+      break;
+
     default:
       DeviceLog.create({
         deviceId: device.serial,

@@ -11,14 +11,7 @@ exports.index = function(req, res) {
     var result = [];
 
     devices.forEach(function(device, i, context){
-      result.push({
-        _id: device._id,
-        name : device.name,
-        port : device.port,
-        serial: device.serial,
-        jobid: device.jobid,
-        tags: device.tags
-      });
+      result.push( device.toObject() );
     });
 
     return res.json(200, result);
