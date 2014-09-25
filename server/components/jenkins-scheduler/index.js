@@ -108,7 +108,6 @@ function assignDevice(device, socket){
       if(!client){ return; }
 
       device.jobid = client.jobid;
-      //device.ip = socket.request.connection.remoteAddress || ip.address();
       socket.emit("svc_device", { 
         ip: ip.address(), 
         url: "http://"+ ip.address() + ":9000/devices/" + device._id,
@@ -134,7 +133,7 @@ function assignDevice(device, socket){
         WorkingSockets.push(socket);
       }
 
-      console.log("WorkingSockets : ", WorkingSockets.length);
+      console.log("[jenkins-scheduler] %d clients in used", WorkingSockets.length);
 
     });
   });
@@ -236,11 +235,28 @@ function printWatingQueueState(){
   }
 }
 
+exports.remove = function(socket){
+
+  for(var i=0; i<WorkingSockets.length; ++i){
+    if(WorkingSockets[i].id === socket.id){
+      WorkingSockets[i].disconnect();
+      WorkingSockets.splice(i,1);
+    }
+  }
+
+  for(i=0; i<watingSocketQueue.length; ++i){
+    if(watingSocketQueue[i].id === socket.id){
+      watingSocketQueue[i].disconnect();
+      watingSocketQueue.splice(i,1);
+    }
+  }
+};
+
 
 exports.register = function(socket) {
 
   registerEvent(socket)
-}
+};
 
 /**
  * @message from: api/device/device.socket

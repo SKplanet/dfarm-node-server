@@ -16,6 +16,7 @@ function onDisconnect(socket) {
     if( err) console.log(err);
 
     if(client){
+      scheduler.remove(socket);
       client.remove();  
     }
   });

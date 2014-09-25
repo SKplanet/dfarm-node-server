@@ -11,14 +11,15 @@ exports.generate = function(query, data){
 
   data.id = decodeURIComponent(data.id);
 
+  console.log("[jenkins-scheduler][quest]", data);
+
   if( data.tag ){
     tags = data.tag.split(",");
     tags.forEach(function(s, i){
       tags[i] = s.replace(/^\s+|\s+$/g, '')
     });
-    query.tags = {$elemMatch: {$in: tags} };  
+    query.tags = {'$elemMatch': {'$in': tags} };  
   } 
   
-  console.log("[jenkins-scheduler][quest]", data);
   return true;
 }
