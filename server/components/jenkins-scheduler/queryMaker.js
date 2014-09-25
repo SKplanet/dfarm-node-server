@@ -9,6 +9,8 @@ exports.generate = function(query, data){
     return false;
   }
 
+  data.id = decodeURIComponent(data.id);
+
   if( data.tag ){
     tags = data.tag.split(",");
     tags.forEach(function(s, i){

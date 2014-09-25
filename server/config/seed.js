@@ -6,6 +6,7 @@
 'use strict';
 
 var Device = require('../api/device/device.model');
+var DeviceLog = require('../api/devicelog/devicelog.model');
 var Client = require('../api/client/client.model');
 var User = require('../api/user/user.model');
 
@@ -22,6 +23,11 @@ Device.update({}, {
 Client.find({}).remove(function(){
   
 });
+
+DeviceLog.find({}).remove(function(){
+  
+});
+
 
 User.find({}).remove(function() {
   User.create({

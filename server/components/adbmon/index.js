@@ -83,7 +83,7 @@ module.exports = function startTrackingDevice(){
         if(!match){
           startTcpUsbBridge(serial);
 
-          deviceLogger.recordStart('plugged in', device);
+          deviceLogger.recordStart('connected', device);
 
           console.log('[adbmon] Device %s was plugged in', serial);
           installSupportingTool(device);
@@ -94,7 +94,7 @@ module.exports = function startTrackingDevice(){
 
       tracker.on('remove', function (device) {
 
-        deviceLogger.recordEnd('unplugged', device);
+        deviceLogger.recordEnd('disconnected', device);
         console.log('[adbmon] Device %s was unplugged', device.id);
 
         Device.findOne({serial:device.id}, function(error, d) {

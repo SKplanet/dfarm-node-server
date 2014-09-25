@@ -65,15 +65,13 @@ function onJenDevice(socket, data) {
         // 3. 중복 요청이 아니므로 할당을 시도한다.
         Device.findOne(query, function (err, device) {
 
-          deviceLogger.record('wating', device, client);
-   
           if(device){
-            
+  
             assignDevice(device, socket);
 
           }else{
 
-            // there is no avilable device.
+            deviceLogger.record('waiting', data.tag, client);
             var index = _.indexOf(watingSocketQueue, socket);
             if(index < 0){
               watingSocketQueue.push(socket);
