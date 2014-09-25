@@ -17,8 +17,6 @@ exports.register = function(socketio) {
 
 function onSave(socketio, doc, cb) {
 
-  console.log('test', doc);
-
   socketio.to('devicelog').emit('devicelog:save', {
     _id: doc.id,
     deviceId: doc.deviceId,
