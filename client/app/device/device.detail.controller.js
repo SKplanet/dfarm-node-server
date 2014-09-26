@@ -12,7 +12,7 @@ angular.module('devicefarmApp')
 
     $http.get('/api/devicelogs/'+ device.serial, {params:{lastest:10}}).success(function(logs) {
       $scope.logs = logs;
-      console.log(logs);
+      console.log('logs', logs);
       socket.syncUpdates('devicelog', $scope.logs, function(message, data){
         console.log('devicelog: ', message, data);
       })
