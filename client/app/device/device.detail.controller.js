@@ -8,6 +8,10 @@ angular.module('devicefarmApp')
   $scope.isEditManagerName = false;
   $scope.isEditManagerTeam = false;
 
+  $scope.matchDevice = function(item){
+    return (item.deviceId == $scope.device.serial);
+  }
+
   $http.get('/api/devices/' + id).success(function(device) {
     $scope.device = device;
 
