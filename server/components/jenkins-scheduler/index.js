@@ -153,7 +153,6 @@ function onReleaseDevice(socket, message){
 
   if( TcpUsbBridges[socket.id] ) {
 
-    console.log('[TcpUsbBridges] close port:', TcpUsbBridges[socket.id].client.options.port);
     serial = TcpUsbBridges[socket.id].serial;
     TcpUsbBridges[socket.id].close();
     TcpUsbBridges[socket.id] = null;
@@ -166,6 +165,8 @@ function onReleaseDevice(socket, message){
     Device.findOne({serial:serial}, function (err, device) {
       if(err) { return console.log(err) }
       if(!device) { return; }
+
+      console.log('[TcpUsbBridges] was closed:', device.port);
 
       deviceLogger.record('released', device, client);
   

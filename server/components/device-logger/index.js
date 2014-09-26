@@ -9,7 +9,7 @@ var DeviceLog = require('../../api/devicelog/devicelog.model');
 
 exports.recordStart = function(state, device){
   DeviceLog.create({
-    deviceId: device.serial,
+    deviceId: device.id,
     state: state
   });
 };
@@ -51,7 +51,7 @@ exports.record = function(state, device, client){
 
 exports.recordEnd = function(state, device){
   DeviceLog.create({
-    deviceId: device.serial,
+    deviceId: device.id,
     state: state
   });
 };

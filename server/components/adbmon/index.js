@@ -90,6 +90,7 @@ module.exports = function startTrackingDevice(){
         }else{
           console.log('[adbmon] IP Device %s is skipped!', serial);
         }
+
       });
 
       tracker.on('remove', function (device) {

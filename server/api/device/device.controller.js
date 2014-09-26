@@ -1,6 +1,8 @@
 'use strict';
 
-var _ = require('lodash');
+var _ = require('lodash'),
+  moment = require('moment');
+
 var Device = require('./device.model');
 
 // Get list of devices
