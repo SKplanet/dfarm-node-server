@@ -4,6 +4,7 @@ angular.module('devicefarmApp')
 .controller('DeviceDetailCtrl', function ($scope, $http, $location, $modal, $log, socket) {
 
   var id = $location.path().replace('/devices/','');
+
   $scope.isEditManagerName = false;
   $scope.isEditManagerTeam = false;
 
