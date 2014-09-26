@@ -45,7 +45,7 @@
   <div class="history">
     <h2>History</h2>
     <ul>
-      <li ng-repeat="log in logs | filter:{id: device.id } | orderBy:'-date' | limitTo:15">
+      <li ng-repeat="log in logs | filter:{id: device._id } | orderBy:'-date' | limitTo:15">
         {{log.dispDate}} - {{log.state}} - <a href='{{log.jenkinsJobUrl}}'>{{log.jenkinsJobUrl}}</a>
       </li>
     </ul>
