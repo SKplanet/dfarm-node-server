@@ -18,7 +18,8 @@ exports.register = function(socketio) {
 function onSave(socketio, doc, cb) {
 
   socketio.to('devicelog').emit('devicelog:save', {
-    _id: doc.id,
+    _id: doc._id,
+    id: doc.id,
     deviceId: doc.deviceId,
     jenkinsJobUrl: doc.jenkinsJobUrl,
     state: doc.state,
