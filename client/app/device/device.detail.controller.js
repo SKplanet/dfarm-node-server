@@ -10,8 +10,6 @@ angular.module('devicefarmApp')
 
   $scope.findDeviceSerial = function(item){
 
-    console.log(item.deviceId , $scope.device.serial, item.deviceId == $scope.device.serial)
-
     return (item.deviceId == $scope.device.serial);
   }
 

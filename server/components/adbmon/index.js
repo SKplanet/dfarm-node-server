@@ -69,7 +69,12 @@ function installSupportingTool(device){
   .catch(function(err) {
     console.error('[adbmon][unexpected error catch] maybe adb problem.', err);
   })
+}
 
+function isIPAddress(str){
+  var match = str.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])/);
+
+  return !!match;
 }
 
 module.exports = function startTrackingDevice(){
@@ -78,9 +83,8 @@ module.exports = function startTrackingDevice(){
 
       tracker.on('add', function (device) {
         var serial = device.id;
-        var match = serial.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])/);
-
-        if(!match){
+        
+        if( !isIPAddress(serial) ){
           startTcpUsbBridge(serial);
 
           deviceLogger.recordStart('connected', device);
@@ -88,22 +92,28 @@ module.exports = function startTrackingDevice(){
           console.log('[adbmon] Device %s was plugged in', serial);
           installSupportingTool(device);
         }else{
-          console.log('[adbmon] IP Device %s is skipped!', serial);
+          console.log('[adbmon] IP Device %s is skipped! from tracking device add', serial);
         }
 
       });
 
       tracker.on('remove', function (device) {
+        var serial = device.id;
 
-        deviceLogger.recordEnd('disconnected', device);
-        console.log('[adbmon] Device %s was unplugged', device.id);
+        if( !isIPAddress(serial) ){
+          deviceLogger.recordEnd('disconnected', device);
+          console.log('[adbmon] Device %s was unplugged', device.id);
 
-        Device.findOne({serial:device.id}, function(error, d) {
-          if(d){
-            d.isConnected = false;
-            d.save();  
-          }
-        });
+          Device.findOne({serial:device.id}, function(error, d) {
+            if(d){
+              d.isConnected = false;
+              d.save();  
+            }
+          });
+        }else{
+
+          console.log('[adbmon] IP Device %s is skipped! from tracking device remove', serial);
+        }
       });
 
       tracker.on('end', function () {
