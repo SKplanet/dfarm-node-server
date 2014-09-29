@@ -21,6 +21,18 @@ angular.module('devicefarmApp')
     };
 
     $scope.isActive = function(route) {
-      return route === $location.path();
+
+      var path = $location.path().split('/');
+
+      if( path.length < 3){
+
+        return route === $location.path();
+
+      }else{
+
+        return route === "/"+path[1];
+
+      }
+      
     };
   });

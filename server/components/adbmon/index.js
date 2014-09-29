@@ -77,7 +77,41 @@ function isIPAddress(str){
   return !!match;
 }
 
-module.exports = function startTrackingDevice(){
+module.exports.updateDevice = function updateDeviceStatus(){
+
+  client.listDevices()
+  .then(function(devices) {
+
+    console.log('devices', devices);
+
+    // devices.forEach(function(device){
+
+    //   console.log(device);
+    // });
+
+    // return Q.map(devices, function(device) {
+    //   return client.readdir(device.id, '/sdcard')
+    //     .then(function(files) {
+    //       // Synchronous, so we don't have to care about returning at the right time
+    //       files.forEach(function(file) {
+    //         if (file.isFile()) {
+    //           console.log('[%s] Found file "%s"', device.id, file.name)
+    //         }
+    //       })
+    //     })
+    // })
+  })
+  .then(function() {
+    console.log('Done checking /sdcard files on connected devices')
+  })
+  .catch(function(err) {
+    console.error('Something went wrong:', err.stack)
+  })
+
+};
+
+
+module.exports.trackDevice = function startTrackingDevice(){
   client.trackDevices()
     .then(function (tracker) {
 
