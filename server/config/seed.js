@@ -14,7 +14,7 @@ Device.find({}, function(err, devices){
 
   devices.forEach(function(device){
 
-    device.save({isConnected: false, jobid: ''})
+    device.save({isConnected: false, jobid: ''}, function(){});
     
   });
 });
