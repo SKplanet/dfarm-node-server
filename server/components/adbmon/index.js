@@ -188,14 +188,14 @@ module.exports.trackDevice = function startTrackingDevice(){
         }
       });
 
-      tracker.on('end', function () {
-        console.info("[adbmon] restart Tracking device... after 10sec");
-        setTimeout(function(){
+      tracker.on('change', function (device) {
+        console.info("[adbmon] %d device is offline...so restart tracking device after 10sec", device);
+        setTimeout(startTrackingDevice, 10000);
+      });
 
-          startTrackingDevice(this);
-
-        }.bind(this), 10000);
-        console.log('[adbmon] Tracking stopped')
+      tracker.on('end', function (device) {
+        console.info("[adbmon] restart Tracking %d device... after 10sec", device);
+        setTimeout(startTrackingDevice, 10000);
       });
 
     })
