@@ -16,8 +16,9 @@ Device.find({}, function(err, devices){
     device.isConnected = false;
     device.jobid = '';
     device.save(function(){});
-    console.log('[seedDB] finished populating devices');
   });
+
+  console.log('[seedDB] finished populating devices');
 });
 
 Client.find({}).remove(function(){

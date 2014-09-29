@@ -3,7 +3,7 @@
 angular.module('devicefarmApp')
 .controller('DeviceCtrl', function ($scope, $http, $location) {
 
-  $http.get('/api/devices').success(function(devices) {
+  $http.get('/api/devices/all').success(function(devices) {
     $scope.devices = devices;
 
 

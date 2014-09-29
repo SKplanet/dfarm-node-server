@@ -6,6 +6,20 @@ var _ = require('lodash'),
 var Device = require('./device.model');
 
 // Get list of devices
+exports.indexAll = function(req, res) {
+  Device.find({}, function (err, devices) {
+    if(err) { return handleError(res, err); }
+
+    var result = [];
+
+    devices.forEach(function(device, i, context){
+      result.push( device.toObject() );
+    });
+
+    return res.json(200, result);
+  });
+};
+
 exports.index = function(req, res) {
   Device.find({isConnected: true}, function (err, devices) {
     if(err) { return handleError(res, err); }

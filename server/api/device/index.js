@@ -6,6 +6,7 @@ var controller = require('./device.controller');
 var router = express.Router();
 
 router.get('/', controller.index);
+router.get('/all', controller.indexAll);
 router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
