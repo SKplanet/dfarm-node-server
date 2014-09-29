@@ -10,10 +10,9 @@ var DeviceLog = require('../api/devicelog/devicelog.model');
 var Client = require('../api/client/client.model');
 var User = require('../api/user/user.model');
 
-Device.update({}, {
+Device.find({}).update({
   isConnected: false,
-  jobid: '',
-  port: 6668
+  jobid: ''
 }, function(err, numberAffected, raw) {
   if (err) return handleError(err);
   console.log('The number of updated documents was %d', numberAffected);
