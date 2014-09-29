@@ -10,13 +10,13 @@ var DeviceLog = require('../api/devicelog/devicelog.model');
 var Client = require('../api/client/client.model');
 var User = require('../api/user/user.model');
 
-Device.find({}).update({
-  isConnected: false,
-  jobid: ''
-}, function(err, numberAffected, raw) {
-  if (err) return handleError(err);
-  console.log('The number of updated documents was %d', numberAffected);
-  console.log('The raw response from Mongo was ', raw);
+Device.find({}, function(err, devices){
+
+  devices.forEach(function(device){
+
+    device.save({isConnected: false, jobid: ''})
+    
+  });
 });
 
 Client.find({}).remove(function(){
