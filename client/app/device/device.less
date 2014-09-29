@@ -1,7 +1,7 @@
 .float-box {
   float: left;
-  width: 400px;
-  height: 300px;  
+  width: 300px;
+  height: 300px;
 
   &.photo {
     text-align: center;
@@ -9,17 +9,26 @@
     img {
       height: 240px;
     }
-
-    .deviceInfo {
-    }
   }
 
   &.deviceInfo {
     width: 200px;
   }
 
+  .deviceInfo {
+    .nav-stacked > li + li {
+      line-height: 10px;
+      font-size: 12px;
+    }
+
+    h4 {
+      margin-bottom: 0px;
+    }
+  }
+
   &.managerInfo {
     width: 200px;
+
     h4 {
       cursor: pointer;
     }

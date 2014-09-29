@@ -5,11 +5,43 @@ var client = adb.createClient();
 var Device = require('../../api/device/device.model');
 var deviceLogger = require('../../components/device-logger');
 var Q = require('q');
-var basePort = 6668;
+
+function assignPort(){
+
+  return Q.promise(function(resolve, reject, notify){
+
+    var ports = [];
+    var basePort = 6668;
+
+    Device.find({}, function(err, devices){
+
+      if(err){ return console.log(err); }
+
+      devices.forEach(function(device){
+        ports.push(device.port);
+      });
+
+      // 포트를 정렬하고,...
+      ports.sort();
+
+      ports.forEach(function(port){
+
+        if(basePort === port){
+          basePort++;
+        }else{
+
+          resolve(port);
+        }
+      });
+      resolve(basePort);
+    });
+
+  });
+
+}
 
 function startTcpUsbBridge(serial) {
 
-  var assignedPort = basePort++; // TODO: AutoIncrement로 변경해야함. 
   setTimeout(function () {
 
     client.getProperties(serial)
@@ -27,25 +59,31 @@ function startTcpUsbBridge(serial) {
         Device.findOne({serial: serial}, function(err, device){
 
           if(device){
+            device.jobid = "";
             device.isConnected = true;
             device.save();
 
+            console.log("[adbmon] %s device was initialized", device.serial);  
+
           }else{
 
-            Device.create({
-              name : deviceName,
-              port : assignedPort,
-              serial : serial,
-              tags : tags,
-              isConnected: true
-            }, function(err, doc){
-              if(err){
-                console.log("[adbmon] ", err.err);
-              }else{
-                console.log("[adbmon] added device to DB");  
-              }
-              
-            });
+            assignPort()
+            .then(function(port){
+
+              Device.create({
+                name : deviceName,
+                port : port,
+                serial : serial,
+                tags : tags,
+                isConnected: true
+              }, function(err, doc){
+                if(err){
+                  console.log("[adbmon] ", err.err);
+                }else{
+                  console.log("[adbmon] added device to DB");  
+                }
+              });
+            })
 
           }
 
