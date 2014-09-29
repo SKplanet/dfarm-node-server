@@ -190,12 +190,17 @@ module.exports.trackDevice = function startTrackingDevice(){
 
       tracker.on('change', function (device) {
         console.info("[adbmon] %d device is offline...so restart tracking device after 10sec", device);
-        setTimeout(startTrackingDevice, 10000);
+        //setTimeout(startTrackingDevice, 10000);
       });
 
-      tracker.on('end', function (device) {
-        console.info("[adbmon] restart Tracking %d device... after 10sec", device);
-        setTimeout(startTrackingDevice, 10000);
+      tracker.on('end', function () {
+        console.info("[adbmon] the underlying connection ends...", device);
+        //setTimeout(startTrackingDevice, 10000);
+      });
+
+      tracker.on('err', function (err) {
+        console.info("[adbmon] tracker has errors.", err);
+        //setTimeout(startTrackingDevice, 10000);
       });
 
     })
