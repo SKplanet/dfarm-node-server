@@ -16,12 +16,9 @@ angular.module('devicefarmApp')
   $http.get('/api/devices/' + id).success(function(device) {
     $scope.device = device;
 
-    $http.get('/api/devicelogs/'+ device.serial, {params:{lastest:10}}).success(function(logs) {
+    $http.get('/api/devicelogs/'+ device.serial, {params:{lastest:20}}).success(function(logs) {
       $scope.logs = logs;
-      console.log('logs', logs);
-      socket.syncUpdates('devicelog', $scope.logs, function(message, data){
-        console.log('devicelog: ', message, data);
-      })
+      socket.syncUpdates('devicelog', $scope.logs);
     });
 
   });

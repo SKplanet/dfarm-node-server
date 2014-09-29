@@ -17,7 +17,7 @@ exports.show = function(req, res) {
 
   Devicelog.find({
     deviceId: req.params.id
-  }).limit(10).sort('-date').exec(function (err, devicelogs) {
+  }).limit(20).sort('-date').exec(function (err, devicelogs) {
     if(err) { return handleError(res, err); }
     if(!devicelogs) { return res.send(404); }
 

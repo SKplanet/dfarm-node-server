@@ -25,9 +25,9 @@ Client.find({}).remove(function(){
   console.log('[seedDB] finished populating clients');
 });
 
-DeviceLog.find({}).remove(function(){
-  console.log('[seedDB] finished populating device logs');
-});
+// DeviceLog.find({}).remove(function(){
+//   console.log('[seedDB] finished populating device logs');
+// });
 
 
 User.find({}).remove(function() {

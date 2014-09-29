@@ -44,19 +44,26 @@
 .history {
   clear: left;
 
-  ul {
+  .logs {
     background-color: black;
     color: #ccc;
-    list-style: none;
-    padding: 10px;
-    margin: 0;
     height: 300px;
     overflow-y: scroll;
+
+    ul {
+      padding: 10px;
+      margin: 0;
+      list-style: none;
+    }
   }
 }
 
-
-
 .clickable {
   cursor: pointer;
+}
+
+[scroll-glue]{
+  height: 100px;
+  overflow-y: scroll;
+  border: 1px solid grey;
 }
