@@ -13,18 +13,19 @@ var User = require('../api/user/user.model');
 Device.find({}, function(err, devices){
 
   devices.forEach(function(device){
-
-    device.save({isConnected: false, jobid: ''}, function(){});
-    
+    device.isConnected = false;
+    device.jobid = '';
+    device.save(function(){});
+    console.log('[seedDB] finished populating devices');
   });
 });
 
 Client.find({}).remove(function(){
-  
+  console.log('[seedDB] finished populating clients');
 });
 
 DeviceLog.find({}).remove(function(){
-  
+  console.log('[seedDB] finished populating device logs');
 });
 
 

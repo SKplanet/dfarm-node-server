@@ -38,7 +38,8 @@ var socketio = require('socket.io')({
 require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
-adbmon.trackDevice();
+
+setTimeout(adbmon.trackDevice, 1000);
 
 //setInterval(adbmon.updateDevice, 10000);
 
