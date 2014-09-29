@@ -194,7 +194,7 @@ module.exports.trackDevice = function startTrackingDevice(){
       });
 
       tracker.on('end', function () {
-        console.info("[adbmon] the underlying connection ends...", device);
+        console.info("[adbmon] the underlying connection ends...");
         //setTimeout(startTrackingDevice, 10000);
       });
 
