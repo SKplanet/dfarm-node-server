@@ -21,10 +21,10 @@ function assignPort(){
       });
 
       ports.sort();
+
       for(i=0, len=ports.length; i<len; ++i){
 
         if(basePort !== ports[i]){
-          basePort = ports[i];
           break;
         }
 
