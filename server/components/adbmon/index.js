@@ -10,8 +10,7 @@ function assignPort(){
 
   return Q.promise(function(resolve, reject, notify){
 
-    var ports = [];
-    var basePort = 6668;
+    var ports = [], basePort = 6668, i, len;
 
     Device.find({}, function(err, devices){
 
@@ -21,18 +20,17 @@ function assignPort(){
         ports.push(device.port);
       });
 
-      // 포트를 정렬하고,...
       ports.sort();
+      for(i=0, len=ports.length; i<len; ++i){
 
-      ports.forEach(function(port){
-
-        if(basePort === port){
-          basePort++;
-        }else{
-
-          resolve(port);
+        if(basePort !== ports[i]){
+          basePort = port;
+          break;
         }
-      });
+
+        basePort++;
+      };
+
       resolve(basePort);
     });
 
@@ -115,40 +113,6 @@ function isIPAddress(str){
   return !!match;
 }
 
-module.exports.updateDevice = function updateDeviceStatus(){
-
-  client.listDevices()
-  .then(function(devices) {
-
-    console.log('devices', devices);
-
-    // devices.forEach(function(device){
-
-    //   console.log(device);
-    // });
-
-    // return Q.map(devices, function(device) {
-    //   return client.readdir(device.id, '/sdcard')
-    //     .then(function(files) {
-    //       // Synchronous, so we don't have to care about returning at the right time
-    //       files.forEach(function(file) {
-    //         if (file.isFile()) {
-    //           console.log('[%s] Found file "%s"', device.id, file.name)
-    //         }
-    //       })
-    //     })
-    // })
-  })
-  .then(function() {
-    console.log('Done checking /sdcard files on connected devices')
-  })
-  .catch(function(err) {
-    console.error('Something went wrong:', err.stack)
-  })
-
-};
-
-
 module.exports.trackDevice = function startTrackingDevice(){
   client.trackDevices()
     .then(function (tracker) {
@@ -189,18 +153,15 @@ module.exports.trackDevice = function startTrackingDevice(){
       });
 
       tracker.on('change', function (device) {
-        console.info("[adbmon] %d device is offline...so restart tracking device after 10sec", device);
-        //setTimeout(startTrackingDevice, 10000);
+        console.info("[adbmon] %s device is offline...", device.id);
       });
 
       tracker.on('end', function () {
         console.info("[adbmon] the underlying connection ends...");
-        //setTimeout(startTrackingDevice, 10000);
       });
 
       tracker.on('err', function (err) {
         console.info("[adbmon] tracker has errors.", err);
-        //setTimeout(startTrackingDevice, 10000);
       });
 
     })

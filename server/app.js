@@ -39,9 +39,8 @@ require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
 
+// for after db seeding
 setTimeout(adbmon.trackDevice, 1000);
-
-//setInterval(adbmon.updateDevice, 10000);
 
 // Start server
 server.listen(config.port, config.ip, function () {
