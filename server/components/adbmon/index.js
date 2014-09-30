@@ -24,7 +24,7 @@ function assignPort(){
       for(i=0, len=ports.length; i<len; ++i){
 
         if(basePort !== ports[i]){
-          basePort = port;
+          basePort = ports[i];
           break;
         }
 
