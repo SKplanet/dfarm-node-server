@@ -18,7 +18,7 @@ exports.generate = function(query, data){
     tags.forEach(function(s, i){
       tags[i] = s.replace(/^\s+|\s+$/g, '')
     });
-    query.tags = {'$elemMatch': {'$in': tags} };  
+    query.tags = {'$in': tags};  
   } 
   
   return true;
