@@ -35,12 +35,12 @@ function onConnect(socket) {
   if( userAgent.match(/java/i) ){
     socket.connectedTo = 'jenkins-plugin';
     scheduler.register(socket);
-    state = 'waiting';
+    state = 'connected';
   } 
   else if( userAgent.match(/node/i) ){
     socket.connectedTo = 'node-test-client';
     scheduler.register(socket);
-    state = 'waiting';
+    state = 'connected';
 
   } 
   else{

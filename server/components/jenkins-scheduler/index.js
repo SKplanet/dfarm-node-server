@@ -16,6 +16,7 @@ var ip = require('ip');
 var client = adb.createClient();
 var TcpUsbBridges = [];
 var _ = require('lodash');
+var dlog = require('../../components/debug-logger');
 
 function registerEvent(socket){
 
@@ -50,7 +51,8 @@ function onJenDevice(socket, data) {
   }
 
   // 1. 일단 jobid를 client에 설정하고,..
-  Client.findOneAndUpdate({id: socket.id}, {jobid:data.id}, function(err, client){
+  socket.requestTag = data.tag;
+  Client.findOneAndUpdate({id: socket.id}, {jobid:data.id, state:'waiting'}, function(err, client){
 
     if (err){ console.log(err); }
 
@@ -91,12 +93,26 @@ function onJenDevice(socket, data) {
   });
 } 
 
-function assignDeviceFromQueue(device){
-  var socket = waitingSocketQueue.shift();
 
-  if(socket){
-     
-     assignDevice(device, socket);
+
+/**
+ * WaitingSocketQueue를 뒤져서 할당할수있는 녀석을 찾아본다.
+ */
+function assignDeviceFromQueue(device){
+
+  var socket,i,len = waitingSocketQueue.length;
+
+  for(i=0; i<len; ++i){
+
+    socket = waitingSocketQueue[i];
+
+    if( _.findIndex(device.tags, socket.requestTag) > -1 ){
+    
+      assignDevice(device, socket);
+      waitingSocketQueue.splice(i,1);
+      break;      
+    
+    }
   }
 
   printWatingQueueState();
@@ -124,7 +140,7 @@ function assignDevice(device, socket){
       });
 
       client.deviceName = device.name;
-      client.state = 'in use';
+      client.state = 'processing';
       client.save(function(err){
         if (err) { return console.log('client saving error') } 
       });
@@ -179,7 +195,7 @@ function onReleaseDevice(socket, message){
       if(message === 'jen_out'){
         client.deviceName = '';
         client.jobid = '';
-        client.state = 'waiting';
+        client.state = 'done';
         client.save(function(err){
           if (err) { return console.log('client saving error') } 
         });
@@ -201,10 +217,11 @@ function assignDevicePort(socketid, serial, port, callback){
 
   var server = client.createTcpUsbBridge(serial);
 
-  console.log("[adbmon] trying open port...", port);
   server.listen(port);
   server.on('listening', function () {
-    console.log("[adbmon] Tcp Usb Bridge server started... client-port ", server.client);
+
+    dlog.log('TcpUsbBridge','server started and listening tcp port: %d', port);
+    console.log('[adbmon] TcpUsbBridge server started and listening tcp port: %d', port);
 
     if( TcpUsbBridges[socketid] == null ){
       
@@ -239,7 +256,7 @@ function printWatingQueueState(){
   if( waitingSocketQueue.length > 0 ){
     console.log("\n\n[WatingQUEUE State] - %d clients waiting", waitingSocketQueue.length); 
     waitingSocketQueue.forEach(function(socket, i){
-      console.log('| seq | %d | %s |', i, socket.id)
+      console.log('| seq | %d | %s ', i, socket.id, socket.requestTag);
     });
     console.log("--------------\n\n"); 
   }
@@ -276,6 +293,7 @@ exports.notify = function(message, data){
   if(message === 'state:changed') {
 
     if ( data.jobid === '' ){
+
       assignDeviceFromQueue(data);
     }
 

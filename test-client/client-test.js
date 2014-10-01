@@ -1,6 +1,6 @@
 var util = require('util');
-var socket = require('socket.io-client')('http://10.202.34.46:9000');
-//var socket = require('socket.io-client')('http://10.202.35.214:9000');
+//var socket = require('socket.io-client')('http://10.202.34.46:9000');
+var socket = require('socket.io-client')('http://10.202.35.214:9000');
 var S = require('string');
 var isSocketConnected = false;
 
@@ -48,13 +48,13 @@ process.stdin.on('data', function (text) {
 
     if (text.match(/^jen_device/)) {
 
-      socket.emit('jen_device', S(text.replace(/jen_device/, "")).trim().s + '{"id":"http%3A%2F%2F10.202.34.46%3A8080%2Fjob%2Fandroid-test-sample%28SHV-E330S%29%2F45", "tag":"SHV-E330S@4.4.2"}');
+      socket.emit('jen_device', S(text.replace(/jen_device/, "")).trim().s + '{"id":"http%3A%2F%2F10.202.34.46%3A8080%2Fjob%2Fandroid-test-sample%28SHV-E330S%29%2F45", "tag":"SHV-E330S"}');
 
     }
 
     if (text.match(/^jen_dev2/)) {
 
-      socket.emit('jen_device', S(text.replace(/jen_dev2/, "")).trim().s + '{"id":"http%3A%2F%2F10.202.34.46%3A8080%2Fjob%2Fandroid-test-sample%28SHV-E330S%29%2F46", "tag":"SHV-E330S@4.4.2"}');
+      socket.emit('jen_device', S(text.replace(/jen_dev2/, "")).trim().s + '{"id":"http%3A%2F%2F10.202.34.46%3A8080%2Fjob%2Fandroid-test-sample%28SHV-E910S%29%2F46", "tag":"SHV-E910S"}');
 
     }
 

@@ -20,6 +20,10 @@ angular.module('devicefarmApp')
       
     })
     
+    $scope.findWaitingClients = function(item) {
+      return (item.state !== 'processing' );
+    };
+
     $scope.deleteDevice = function(device) {
       $http.delete('/api/devices/' + device._id);
     };

@@ -27,7 +27,8 @@
     "socket.io": "~1.0.6",
     "socketio-jwt": "^2.0.2",
     "static-favicon": "~1.0.1",
-    "string": "^1.9.1"
+    "string": "^1.9.1",
+    "winston": "^0.8.0"
   },
   "devDependencies": {
     "connect-livereload": "~0.4.0",
@@ -84,7 +85,8 @@
     "should": "~3.3.1",
     "socket.io-client": "^1.0.6",
     "supertest": "~0.11.0",
-    "time-grunt": "~0.3.1"
+    "time-grunt": "~0.3.1",
+    "winston": "^0.8.0"
   },
   "engines": {
     "node": ">=0.10.0"
