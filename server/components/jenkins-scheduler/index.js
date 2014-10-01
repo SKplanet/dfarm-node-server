@@ -100,13 +100,17 @@ function onJenDevice(socket, data) {
  */
 function assignDeviceFromQueue(device){
 
-  var socket,i,len = waitingSocketQueue.length;
+  var socket,i,len = waitingSocketQueue.length, index;
 
   for(i=0; i<len; ++i){
 
     socket = waitingSocketQueue[i];
 
-    if( _.findIndex(device.tags, socket.requestTag) > -1 ){
+    index = _.findIndex(device.tags, function(tag){ 
+      return socket.requestTag === tag; 
+    });
+
+    if( index > -1 ){
     
       assignDevice(device, socket);
       waitingSocketQueue.splice(i,1);
