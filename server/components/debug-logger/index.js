@@ -9,6 +9,5 @@ var moduleOptions = {
 
 exports.log = function log (name, format, args) {
   
-  winston
 
 }
