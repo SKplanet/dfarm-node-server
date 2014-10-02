@@ -100,24 +100,32 @@ function onJenDevice(socket, data) {
  */
 function assignDeviceFromQueue(device){
 
-  var socket,i,len = waitingSocketQueue.length, index;
+  var socket = waitingSocketQueue.shift();
 
-  for(i=0; i<len; ++i){
+  if (socket) {
 
-    socket = waitingSocketQueue[i];
+    assignDevice(device, socket);
 
-    index = _.findIndex(device.tags, function(tag){ 
-      return socket.requestTag === tag; 
-    });
-
-    if( index > -1 ){
-    
-      assignDevice(device, socket);
-      waitingSocketQueue.splice(i,1);
-      break;      
-    
-    }
   }
+
+  // var socket,i,len = waitingSocketQueue.length, index;
+
+  // for(i=0; i<len; ++i){
+
+  //   socket = waitingSocketQueue[i];
+
+  //   index = _.findIndex(device.tags, function(tag){ 
+  //     return socket.requestTag === tag; 
+  //   });
+
+  //   if( index > -1 ){
+    
+  //     assignDevice(device, socket);
+  //     waitingSocketQueue.splice(i,1);
+  //     break;      
+    
+  //   }
+  // }
 
   printWatingQueueState();
 }
