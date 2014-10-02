@@ -6,6 +6,7 @@
 'use strict';
 
 var DeviceLog = require('../../api/devicelog/devicelog.model'),
+    Device = require('../../api/device/device.model'),
     moment = require('moment');
 
 exports.recordStart = function(state, device){
@@ -49,6 +50,21 @@ exports.record = function(state, device, client){
 
       });
       break;
+
+    case 'kickout':
+
+      Device.findOne({jobid:client.jobid}, function(err, dev){
+        DeviceLog.create({
+          deviceId: dev.serial,
+          message: 'the client for maintenance.',
+          state: state
+        });
+
+      });
+
+     
+      break;
+
 
   }
 };

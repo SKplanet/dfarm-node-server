@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var moment = require('moment');
 var Client = require('./client.model');
+var Device = require('../device/device.model');
 
 // Get list of clients
 exports.index = function(req, res) {
@@ -51,14 +52,34 @@ exports.update = function(req, res) {
 };
 
 // Deletes a client from the DB.
-exports.destroy = function(req, res) {
+exports.destroy = function (req, res) {
   Client.findById(req.params.id, function (err, client) {
     if(err) { return handleError(res, err); }
     if(!client) { return res.send(404); }
+
     client.remove(function(err) {
       if(err) { return handleError(res, err); }
       return res.send(204);
     });
+  });
+};
+
+exports.kickout = function(req, res){
+  Device.findById(req.params.id, function (err, device) {
+    if(err) { return handleError(res, err); }
+    if(!device) { return res.send(404); }
+
+    Client.findOne({jobid:device.jobid}, function (err, client) {
+
+      if(err) { return handleError(res, err); }
+      if(!client) { return res.send(404); }
+      client.remove(function(err) {
+        if(err) { return handleError(res, err); }
+        return res.send(204);
+      });
+
+    });
+   
   });
 };
 

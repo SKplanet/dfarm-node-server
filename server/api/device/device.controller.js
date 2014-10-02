@@ -59,13 +59,14 @@ exports.update = function(req, res) {
     if(!device) { return res.send(404); }
 
     var updated = _.merge(device, req.body);
-    updated.tags = []; 
-    req.body.tags.forEach(function(tag){
-      updated.tags.push(tag);
-    })
 
-    console.log(updated, req.body.tags)
-
+    if(req.body.tags){
+      updated.tags = []; 
+      req.body.tags.forEach(function(tag){
+        updated.tags.push(tag);
+      })
+    }
+    
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, device);

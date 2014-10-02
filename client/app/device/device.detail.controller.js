@@ -15,6 +15,9 @@ angular.module('devicefarmApp')
 
   $http.get('/api/devices/' + id).success(function(device) {
     $scope.device = device;
+    socket.syncUpdates('device', [$scope.device], function(message, data){
+      $scope.device = data;
+    });
 
     $http.get('/api/devicelogs/'+ device.serial, {params:{lastest:20}}).success(function(logs) {
       $scope.logs = logs;
@@ -27,6 +30,15 @@ angular.module('devicefarmApp')
     socket.unsyncUpdates('devicelog');
   });
 
+
+  $scope.disconnetDevice = function(){
+    $http.delete('/api/clients/kickout/' + id, {jobid:''}).success(function(data) { 
+
+      console.log(data);
+
+    });
+  };
+
   $scope.save = function(){
 
     $http.put('/api/devices/' + id, $scope.device).success(function(){
@@ -35,13 +47,25 @@ angular.module('devicefarmApp')
     });
   };
 
+  $scope.keypress = function($event) {
+    if ( $event.keyCode === 13 ){
+      this.save();
+    }
+  };
 
   $scope.editManagerName = function(){
     $scope.isEditManagerName = true;
+    setTimeout(function(){
+      angular.element("#editName")[0].focus();
+    },100);
   }
 
   $scope.editManagerTeam = function(){
     $scope.isEditManagerTeam = true;
+    setTimeout(function(){
+      angular.element("#editTeam")[0].focus();
+    }, 100);
+    
   }
 
   $scope.openPhotoUrlEditor = function(size){
@@ -121,8 +145,7 @@ angular.module('devicefarmApp')
       }
     });
 
-    modalInstance.result.then(function () {
-    }, function () {
+    modalInstance.result.then(function () {}, function () {
       $log.info('Modal dismissed at: ' + new Date());
     });
   };

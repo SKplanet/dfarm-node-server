@@ -309,6 +309,9 @@ exports.notify = function(message, data){
       if(WorkingSockets[i].id === data.id){
         WorkingSockets[i].disconnect();
         WorkingSockets.splice(i,1);
+
+        console.log('kickout', data);
+        deviceLogger.record('kickout',null,data);
       }
     }
   }

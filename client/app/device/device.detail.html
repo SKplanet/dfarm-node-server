@@ -4,17 +4,27 @@
     <button ng-click='openPhotoUrlEditor()'>단말 사진 수정</button>
   </div>
   <div class="float-box deviceInfo">
-    <h4>{{device.name}}</h4>
+    <h4>단말 정보</h4>
     <ul class="tags nav nav-pill nav-stacked">
       <li ng-repeat="tag in device.tags">{{tag}}</li>
     </ul>
     <button ng-click='openTagEditor()'>태그 수정</button>
   </div>
   <div class="float-box managerInfo">
-    <h4 ng-class="{'hide': isEditManagerName }">{{device.manager.name}} <i class="fa fa-edit" ng-click="editManagerName()"></i></h4>
-    <input ng-class="{'hide': !isEditManagerName }" ng-model="device.manager.name" ng-blur="save()"/>
-    <div ng-class="{'hide': isEditManagerTeam}">{{device.manager.team}}<i class="fa fa-edit" ng-click="editManagerTeam()"></i></div>
-    <input ng-class="{'hide': !isEditManagerTeam }" class="hide" ng-model="device.manager.team"ng-blur="save()" />
+    <h4>단말 관리자</h4>
+    <div ng-class="{'hide': isEditManagerName }" ng-click="editManagerName($event)">{{device.manager.name}}</div>
+    <input id="editName" ng-class="{'hide': !isEditManagerName }" ng-model="device.manager.name" ng-keypress="keypress($event)" ng-blur="isEditManagerName=false"/>
+
+    <div ng-class="{'hide': isEditManagerTeam}" ng-click="editManagerTeam()">{{device.manager.team}}</div>
+    <input id="editTeam" ng-class="{'hide': !isEditManagerTeam }" ng-model="device.manager.team" ng-keypress="keypress($event)" ng-blur="isEditManagerTeam=false"/>
+  </div>
+
+  <div class="float-box control-box" ng-show="device.jobid">
+    <div class="input-group">
+      <h4>사용중인 Jenkins Job</h4>
+      <a href="{{device.jobid}}">{{device.jobid.split('job/')[1]}}</a>
+      <button class="btn btn-danger" ng-click="disconnetDevice()">연결 끊기</button>
+    </div>
   </div>
 
   <script type="text/ng-template" id="photoUrlEditModal">
@@ -48,7 +58,7 @@
     <div class='logs' scroll-glue>
       <ul>
         <li ng-repeat="log in logs | filter:findDeviceSerial | orderBy:'date'" ng-class="{'seperate':log.state === 'released'}">
-          {{log.dispDate}} {{log.state}} <span ng-hide="log.state==='assigned'">{{log.message}}</span> <a ng-show="log.state==='assigned'" href='{{log.message}}'>{{log.message}}</a>
+          {{log.dispDate}} {{log.state}} <span ng-hide="log.state==='assigned'">{{log.message}}</span> <a ng-show="log.state==='assigned'" href='{{log.message}}'>{{log.message.split('job/')[1]}}</a>
         </li>
       </ul>
     </div>
