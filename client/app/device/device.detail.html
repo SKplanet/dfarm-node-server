@@ -47,12 +47,10 @@
 
     <div class='logs' scroll-glue>
       <ul>
-        <li ng-repeat="log in logs | filter:findDeviceSerial | orderBy:'date'" ng-class="{seperate:'log.state==='finding device'}">
-          {{log.dispDate}} - {{log.state}} <a ng-show="log.state==='assigned'" href='{{log.jenkinsJobUrl}}'>{{log.jenkinsJobUrl}}</a>
+        <li ng-repeat="log in logs | filter:findDeviceSerial | orderBy:'date'" ng-class="{'seperate':log.state === 'released'}">
+          {{log.dispDate}} {{log.state}} <span ng-hide="log.state==='assigned'">{{log.message}}</span> <a ng-show="log.state==='assigned'" href='{{log.message}}'>{{log.message}}</a>
         </li>
       </ul>
     </div>
   </div>
-  
-
 </div>

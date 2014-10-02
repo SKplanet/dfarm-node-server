@@ -150,7 +150,7 @@ function assignDevice(device, socket){
       });
 
       // 디바이스 사용로그에 시작 시간을 기록한다.
-      deviceLogger.record('finding device', device, client.requestTag);
+      deviceLogger.record('tag', device, client);
       setTimeout(function(){
         deviceLogger.record('assigned', device, client);  
       }, 10);

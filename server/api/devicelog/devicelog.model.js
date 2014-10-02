@@ -3,13 +3,13 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     moment = require('moment'),
-    LOG_DATE_FORMAT = '[[]YYYY-MM-DD hh:mm:ss[]]';
+    LOG_DATE_FORMAT = '[[]YYYY-MM-DD HH:mm:ss.SSS[]]';
 
 var DevicelogSchema = new Schema({
   date: { type: Date, default: Date.now },
   deviceId: String,
-  jenkinsJobUrl: String,
-  state: String
+  state: String,
+  message: String
 });
 DevicelogSchema.set('autoIndex', false);
 

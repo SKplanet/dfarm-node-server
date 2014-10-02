@@ -24,6 +24,7 @@ function onSave(socketio, doc, cb) {
     jenkinsJobUrl: doc.jenkinsJobUrl,
     state: doc.state,
     dispDate: doc.dispDate,
+    message: doc.message,
     date: doc.date
   });
 }

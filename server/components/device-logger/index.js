@@ -5,7 +5,8 @@
  */
 'use strict';
 
-var DeviceLog = require('../../api/devicelog/devicelog.model');
+var DeviceLog = require('../../api/devicelog/devicelog.model'),
+    moment = require('moment');
 
 exports.recordStart = function(state, device){
   DeviceLog.create({
@@ -17,35 +18,38 @@ exports.recordStart = function(state, device){
 exports.record = function(state, device, client){
 
   switch(state){
+    case 'tag':
+      DeviceLog.create({
+        deviceId: device.serial,
+        state: '',
+        message: 'request ==> ' + client.requestTag
+      });
+      break;
+
+    case 'assigned':
+      DeviceLog.create({
+        deviceId: device.serial,
+        message: client.jobid,
+        state: state
+      });
+      break;
+
     case 'released':
-      DeviceLog.create({
-        deviceId: device.serial,
-        jenkinsJobUrl: device.jobid,
-        state: state
+
+      DeviceLog.findOne({deviceId:device.serial, state:'assigned'})
+      .sort('-date')
+      .exec(function(err, log){
+        var diff = moment().diff(log.date);
+
+        DeviceLog.create({
+          deviceId: device.serial,
+          message: ' time spend ==> ' + diff / 1000 + 's',
+          state: state
+        });
+
       });
       break;
 
-    case 'waiting':
-      DeviceLog.create({
-        deviceId: device,
-        jenkinsJobUrl: client.jobid,
-        state: state
-      });
-      break;
-
-    case 'finding device':
-      DeviceLog.create({
-        deviceId: device.serial,
-        state: state + ' - ' + client
-      });
-      break;
-
-    default:
-      DeviceLog.create({
-        deviceId: device.serial,
-        jenkinsJobUrl: client.jobid,
-        state: state
-      });
   }
 };
 
