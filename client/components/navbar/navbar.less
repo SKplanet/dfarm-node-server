@@ -1,22 +1,28 @@
-.navbar-default.navbar {
-  .active {
-    font-weight: bold;
-    border-bottom: 4px solid #546;
 
-    > a {
-      background-color: transparent;
-      padding-bottom: 11px;
+
+@media (min-width: 768px) { 
+
+  .navbar-default.navbar {
+    .active {
+      font-weight: bold;
+      border-bottom: 4px solid #546;
+
+      > a {
+        background-color: transparent;
+        padding-bottom: 11px;
+      }
+      > a:hover{
+        background-color: transparent;
+      }
     }
-    > a:hover{
-      background-color: transparent;
+
+    li:hover {
+      border-bottom: 4px solid #982;
+      > a {
+        background-color: transparent;
+        padding-bottom: 11px;
+      }
     }
   }
 
-  li:hover {
-    border-bottom: 4px solid #982;
-    > a {
-      background-color: transparent;
-      padding-bottom: 11px;
-    }
-  }
 }
