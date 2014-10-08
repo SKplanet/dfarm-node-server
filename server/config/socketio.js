@@ -82,13 +82,13 @@ module.exports = function (socketio) {
     // Call onDisconnect.
     socket.on('disconnect', function () {
       onDisconnect(socket);
-      console.info('[%s] DISCONNECTED - %s', socket.address, socket.id);
+      //console.info('[%s] DISCONNECTED - %s', socket.address, socket.id);
 
     });
 
     // Call onConnect.
     onConnect(socket);
-    console.info('[%s] CONNECTED - %s', socket.address, socket.id);
+    //console.info('[%s] CONNECTED - %s', socket.address, socket.id);
   });
 
   // Insert sockets below

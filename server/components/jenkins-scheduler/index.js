@@ -44,7 +44,7 @@ function registerEvent(socket){
  */ 
 function onJenDevice(socket, data) {
 
-  var query = {jobid:'', isConnected:true};
+  var query = {};
   if( !queryMaker.generate(query, data) ){
     socket.disconnect();
     return;
@@ -70,19 +70,32 @@ function onJenDevice(socket, data) {
 
       }else{
 
-        // 3. 중복 요청이 아니므로 할당을 시도한다.
-        Device.findOne(query, function (err, device) {
 
-          if(device){
-  
-            assignDevice(device, socket);
+        // 3. 중복 요청이 아니므로 할당을 시도한다.
+        Device.find(query, function (err, devices) {
+
+          if(devices.length){
+
+            var device = _.find(devices, {jobid:'', isConnected:true});
+
+            if(device){
+              
+              assignDevice(device, socket);  
+
+            }else{
+
+              var index = _.indexOf(waitingSocketQueue, socket);
+              if(index < 0){
+                waitingSocketQueue.push(socket);
+              }
+            }
 
           }else{
 
-            var index = _.indexOf(waitingSocketQueue, socket);
-            if(index < 0){
-              waitingSocketQueue.push(socket);
-            }
+            socket.emit("svc_nodevice", { 
+              tags: data.tag
+            });
+
           }
 
         });

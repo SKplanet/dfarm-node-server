@@ -13,6 +13,13 @@ socket.on('connect', function(){
 
   });
 
+  socket.on('svc_nodevice', function(data){
+
+    console.log("svc_nodevice", data);
+    process.exit();
+
+  });
+
   socket.on('disconnect', function(){
    // socket.removeListener('svc_device');
    console.log("disconnect inside.. so removed listener");
