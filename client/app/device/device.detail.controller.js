@@ -3,8 +3,7 @@
 
   angular
     .module('devicefarmApp')
-    .controller('DeviceDetailCtrl', DeviceDetailCtrl)
-    .filter('findDeviceSerial', findDeviceSerial);
+    .controller('DeviceDetailCtrl', DeviceDetailCtrl);
 
   function DeviceDetailCtrl($scope, $location, $modal, $log, $timeout, DeviceService, DeviceLogService, socket) {
 
@@ -18,6 +17,7 @@
       .success(function(device){
 
         $scope.device = device;
+
         socket.syncUpdates('device', [$scope.device], function(message, data){
           $scope.device = data;
         });
@@ -26,7 +26,13 @@
           .getLogs(device.serial)
           .success(function(logs){
             $scope.logs = logs;
-            socket.syncUpdates('devicelog', $scope.logs);
+            socket.syncUpdates('devicelog', [], function(message, data){
+
+              if( $scope.device.serial ==  data.deviceId){
+                $scope.logs.push(data);
+              }
+
+            });
           });
       });
     
@@ -152,10 +158,5 @@
     };
     
   }
-
-  function findDeviceSerial(item){
-    return (item.deviceId == $scope.device.serial);
-  }
-
 
 })();
