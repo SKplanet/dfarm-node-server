@@ -18,8 +18,12 @@
 
         $scope.device = device;
 
-        socket.syncUpdates('device', [$scope.device], function(message, data){
-          $scope.device = data;
+        socket.syncUpdates('device', [], function(message, data){
+
+          if( $scope.device._id === data._id ){
+            $scope.device = data;  
+          }
+          
         });
 
         DeviceLogService
