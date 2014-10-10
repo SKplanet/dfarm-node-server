@@ -5,14 +5,14 @@
     .module('devicefarmApp')
     .controller('DeviceDetailCtrl', DeviceDetailCtrl);
 
-  function DeviceDetailCtrl($scope, $location, $modal, $log, $timeout, DeviceService, DeviceLogService, socket) {
+  function DeviceDetailCtrl($scope, $location, $modal, $log, $timeout, Device, DeviceLog, Client, socket) {
 
     var id = $location.path().replace('/devices/','');
 
     $scope.isEditManagerName = false;
     $scope.isEditManagerTeam = false;
 
-    DeviceService
+    Device
       .getDevices(id)
       .success(function(device){
 
@@ -26,7 +26,7 @@
           
         });
 
-        DeviceLogService
+        DeviceLog
           .getLogs(device.serial)
           .success(function(logs){
             $scope.logs = logs;
@@ -47,12 +47,12 @@
 
 
     $scope.disconnetDevice = function(){
-      DeviceService.disconnect(id);
+      Client.disconnect(id);
     };
 
     $scope.keypress = function($event) {
       if ( $event.keyCode === 13 ){
-        DeviceService
+        Device
         .save(id, $scope.device)
         .success(function(){
           $scope.isEditManagerName = false;
@@ -87,7 +87,7 @@
           $scope.ok = function () {
             console.log($scope, device);
 
-            DeviceService
+            Device
               .save(id, $scope.device)
               .success(function(){
                 $modalInstance.close($scope);
@@ -133,7 +133,7 @@
 
             $scope.device.tags = tags;
 
-            DeviceService
+            Device
               .save(id, $scope.device)
               .success(function(){
                 $modalInstance.close($scope);

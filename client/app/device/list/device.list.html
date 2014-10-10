@@ -1,6 +1,6 @@
 <div class="container device-list">
   <div ng-repeat="device in devices">
-    <div class="float-box photo clickable" ng-click="go(device._id)">
+    <div class="float-box photo clickable" ng-click="$state.go('device-detail', {id: device._id})">
         <img src='{{device.photoUrl}}'>
         <div class="deviceInfo">
           <h4>{{device.name}}</h4>

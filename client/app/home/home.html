@@ -27,7 +27,7 @@
           <span> | {{client.type}} | </span>
           <span>{{client.ip}}</span>
           <span>| {{client.deviceName}}
-            <span class="label state" ng-class="{'label-warning': client.state==='processing', 'label-success': !client.deviceName}"><i ng-class="{'fa fa-check': client.state==='processing'}"> {{client.state}}</i></span>
+            <span class="label state label-success"><i class="fa fa-check"> {{client.state}}</i></span>
             
             <a href="{{client.jobid}}">{{client.requestTag}}</a>
 

@@ -59,9 +59,16 @@ process.stdin.on('data', function (text) {
 
     }
 
-    if (text.match(/^jen_dev2/)) {
+  if (text.match(/^jen_dev2/)) {
 
-      socket.emit('jen_device', S(text.replace(/jen_dev2/, "")).trim().s + '{"id":"http%3A%2F%2F10.202.34.46%3A8080%2Fjob%2Fandroid-test-sample%28SHV-E910S%29%2F46", "tag":"SHV-E331S"}');
+      socket.emit('jen_device', S(text.replace(/jen_dev2/, "")).trim().s + '{"id":"http%3A%2F%2F10.202.34.46%3A8080%2Fjob%2Fandroid-test-sample%28SHV-E910S%29%2F46", "tag":"SHV-E330S"}');
+
+    }
+
+
+    if (text.match(/^jen_dev3/)) {
+
+      socket.emit('jen_device', S(text.replace(/jen_dev2/, "")).trim().s + '{"id":"http%3A%2F%2F10.202.34.46%3A8080%2Fjob%2Fandroid-test-sample%28SHV-E910S%29%2F47", "tag":"SHV-E331S"}');
 
     }
 

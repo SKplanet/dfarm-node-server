@@ -1,6 +1,24 @@
 (function(){
+  'use strict';
 
-  function DeviceService($http){
+  angular
+    .module('devicefarmApp')
+    .service('Device', Device);
+
+  function Device($http){
+
+
+    this.getAll = function(){
+
+      return $http.get('/api/devices/all');
+
+    };
+
+    this.get = function(){
+
+      return $http.get('/api/devices');
+
+    };
 
     this.getDevices = function(id){
 
@@ -9,14 +27,9 @@
     };
 
 
-    this.disconnect = function(id){
-
-      return $http.delete('/api/clients/kickout/' + id, {jobid:''}).success(function(data) { 
-
-        console.log(data);
-
-      });
-    }
+    this.delete = function(id){
+      return $http.delete('/api/clients/' + id);
+    };
 
     this.save = function(id, data){
 
@@ -26,7 +39,5 @@
 
   }
 
-  angular.module('devicefarmApp')
-  .service('DeviceService', DeviceService)
 
 })();
