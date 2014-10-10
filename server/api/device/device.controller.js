@@ -16,7 +16,7 @@ exports.indexAll = function(req, res) {
       result.push( device.toObject() );
     });
 
-    return res.json(200, result);
+    return res.status(200).json(result);
   });
 };
 
@@ -30,7 +30,7 @@ exports.index = function(req, res) {
       result.push( device.toObject() );
     });
 
-    return res.json(200, result);
+    return res.status(200).json(result);
   });
 };
 
@@ -38,8 +38,8 @@ exports.index = function(req, res) {
 exports.show = function(req, res) {
   Device.findById(req.params.id, function (err, device) {
     if(err) { return handleError(res, err); }
-    if(!device) { return res.send(404); }
-    return res.json(device);
+    if(!device) { return res.status(404).end(); }
+    return res.status(200).json(device);
   });
 };
 
@@ -47,7 +47,7 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   Device.create(req.body, function(err, device) {
     if(err) { return handleError(res, err); }
-    return res.json(201, device);
+    return res.status(201).json(device);
   });
 };
 
@@ -56,7 +56,7 @@ exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   Device.findById(req.params.id, function (err, device) {
     if (err) { return handleError(res, err); }
-    if(!device) { return res.send(404); }
+    if(!device) { return res.status(404).end(); }
 
     var updated = _.merge(device, req.body);
 
@@ -69,7 +69,7 @@ exports.update = function(req, res) {
     
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.json(200, device);
+      return res.status(200).json(device);
     });
   });
 };
@@ -78,14 +78,14 @@ exports.update = function(req, res) {
 exports.destroy = function(req, res) {
   Device.findById(req.params.id, function (err, device) {
     if(err) { return handleError(res, err); }
-    if(!device) { return res.send(404); }
+    if(!device) { return res.status(404).end(); }
     device.remove(function(err) {
       if(err) { return handleError(res, err); }
-      return res.send(204);
+      return res.status(204).end();
     });
   });
 };
 
 function handleError(res, err) {
-  return res.send(500, err);
+  return res.status(500).end(err);
 }

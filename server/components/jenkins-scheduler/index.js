@@ -322,7 +322,7 @@ exports.notify = function(message, data){
         WorkingSockets[i].disconnect();
         WorkingSockets.splice(i,1);
 
-        debug.log('kickout', data);
+        debug.log('[client]', 'kickout');
         deviceLogger.record('kickout',null,data);
       }
     }
