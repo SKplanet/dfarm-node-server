@@ -4,6 +4,7 @@ var adb = require('adbkit');
 var client = adb.createClient();
 var Device = require('../../api/device/device.model');
 var deviceLogger = require('../../components/device-logger');
+var debug = require('../../components/debug-logger');
 var Q = require('q');
 
 function assignPort(){
@@ -14,7 +15,7 @@ function assignPort(){
 
     Device.find({}, function(err, devices){
 
-      if(err){ return console.log(err); }
+      if(err){ return debug.log(err); }
 
       devices.forEach(function(device){
         ports.push(device.port);
@@ -61,7 +62,7 @@ function startTcpUsbBridge(serial) {
             device.isConnected = true;
             device.save();
 
-            console.log("[adbmon] %s device was initialized", device.serial);  
+            debug.log("[adbmon]", device.serial + " device was initialized");  
 
           }else{
 
@@ -76,9 +77,9 @@ function startTcpUsbBridge(serial) {
                 isConnected: true
               }, function(err, doc){
                 if(err){
-                  console.log("[adbmon] ", err.err);
+                  debug.log("[adbmon]", err.err);
                 }else{
-                  console.log("[adbmon] added device to DB");  
+                  debug.log("[adbmon]","added device to DB");  
                 }
               });
             })
@@ -100,10 +101,10 @@ function installSupportingTool(device){
   })
   .then(function() {
 
-    console.log('[adbmon] Installed %s on connected device(%s)', apk, device.id);
+    debug.log('[adbmon]','Installed '+apk+' on connected device('+device.id+')');
   })
   .catch(function(err) {
-    console.error('[adbmon][unexpected error catch] maybe adb problem.', err);
+    debug.error('[adbmon]','[unexpected error catch] maybe adb problem.', err);
   })
 }
 
@@ -125,10 +126,10 @@ module.exports.trackDevice = function startTrackingDevice(){
 
           deviceLogger.recordStart('connected', device);
 
-          console.log('[adbmon] Device %s was plugged in', serial);
+          debug.log('[adbmon]','Device '+ serial +' was plugged in');
           installSupportingTool(device);
         }else{
-          console.log('[adbmon] IP Device %s is skipped! from tracking device add', serial);
+          debug.log('[adbmon]','IP Device '+ serial +' is skipped! from tracking device add ' + serial);
         }
 
       });
@@ -138,7 +139,7 @@ module.exports.trackDevice = function startTrackingDevice(){
 
         if( !isIPAddress(serial) ){
           deviceLogger.recordEnd('disconnected', device);
-          console.log('[adbmon] Device %s was unplugged', device.id);
+          debug.log('[adbmon]', 'Device '+ device.id +' was unplugged');
 
           Device.findOne({serial:device.id}, function(error, d) {
             if(d){
@@ -148,24 +149,24 @@ module.exports.trackDevice = function startTrackingDevice(){
           });
         }else{
 
-          console.log('[adbmon] IP Device %s is skipped! from tracking device remove', serial);
+          debug.log('[adbmon] IP Device '+ serial +' is skipped! from tracking device remove');
         }
       });
 
       tracker.on('change', function (device) {
-        console.info("[adbmon] %s device is offline...", device.id);
+        debug.log('[adbmon]', device.id +' device is offline...');
       });
 
       tracker.on('end', function () {
-        console.info("[adbmon] the underlying connection ends...");
+        debug.log('[adbmon]','the underlying connection ends...');
       });
 
       tracker.on('err', function (err) {
-        console.info("[adbmon] tracker has errors.", err);
+        debug.log('[adbmon]','tracker has errors.' + err);
       });
 
     })
     .catch(function (err) {
-      console.error('[adbmon] Something went wrong:', err.stack)
+      debug.error('[adbmon]','Something went wrong:'+ err.stack)
     });
 };

@@ -9,6 +9,7 @@ var Device = require('../api/device/device.model');
 var DeviceLog = require('../api/devicelog/devicelog.model');
 var Client = require('../api/client/client.model');
 var User = require('../api/user/user.model');
+var debug = require('../components/debug-logger');
 
 Device.find({}, function(err, devices){
 
@@ -18,11 +19,11 @@ Device.find({}, function(err, devices){
     device.save(function(){});
   });
 
-  console.log('[seedDB] finished populating devices');
+  debug.log('[seedDB]','finished populating devices');
 });
 
 Client.find({}).remove(function(){
-  console.log('[seedDB] finished populating clients');
+  debug.log('[seedDB]','finished populating clients');
 });
 
 // DeviceLog.find({}).remove(function(){
@@ -43,7 +44,7 @@ User.find({}).remove(function() {
     email: 'admin@admin.com',
     password: 'admin'
   }, function() {
-      console.log('[seedDB] finished populating users');
+      debug.log('[seedDB]', 'finished populating users');
     }
   );
 });

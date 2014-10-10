@@ -1,17 +1,19 @@
 'use strict';
 
+var debug = require('../../components/debug-logger');
+
 exports.generate = function(query, data){
 
   var tags;
 
   if( !data.id ){
-    console.log("[jenkins-scheduler] It is not a vaild jenkins client!!");
+    debug.log('[jenkins-scheduler]','It is not a vaild jenkins client!!');
     return false;
   }
 
   data.id = decodeURIComponent(data.id);
 
-  console.log("[jenkins-scheduler][quest]", data);
+  debug.log('[jenkins-scheduler]', '[quest]' + JSON.stringify(data) );
 
   if( data.tag ){
     tags = data.tag.split(",");

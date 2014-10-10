@@ -1,4 +1,9 @@
 var winston = require('winston');
+var logger = new (winston.Logger)({
+    transports: [
+      new (winston.transports.Console)({'timestamp':true})
+    ]
+});
 
 var moduleOptions = {
   'TcpUsbBridge' : {
@@ -7,7 +12,10 @@ var moduleOptions = {
   }
 };
 
-exports.log = function log (name, format, args) {
-  
+exports.log = function log (name, message) {
+  logger.info(name, message);
+}
 
+exports.error = function log (name, message) {
+  logger.error('error', name, message);
 }

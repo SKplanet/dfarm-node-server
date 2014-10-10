@@ -8,6 +8,7 @@
 var Device = require('../../api/device/device.model');
 var Client = require('../../api/client/client.model');
 var deviceLogger = require('../../components/device-logger');
+var debug = require('../../components/debug-logger');
 var queryMaker = require('./queryMaker');
 var waitingSocketQueue = [];
 var WorkingSockets = [];
@@ -16,7 +17,6 @@ var ip = require('ip');
 var client = adb.createClient();
 var TcpUsbBridges = [];
 var _ = require('lodash');
-var dlog = require('../../components/debug-logger');
 
 function registerEvent(socket){
 
@@ -54,7 +54,7 @@ function onJenDevice(socket, data) {
   socket.requestTag = data.tag;
   Client.findOneAndUpdate({id: socket.id}, {jobid:data.id, state:'waiting'}, function(err, client){
 
-    if (err){ console.log(err); }
+    if (err){ debug.log(err); }
 
     if(client){
       // 1-1. 클라이언트에 태그 정보를 기록 한다.
@@ -66,7 +66,7 @@ function onJenDevice(socket, data) {
     Device.findOne({jobid: data.id}, function (err, device) {
       if(device){
 
-        console.log("[jenkins-scheduler][warning] duplicated command!");
+        debug.log('[jenkins-scheduler]','[warning] duplicated command!');
 
       }else{
 
@@ -153,13 +153,13 @@ function assignDevice(device, socket){
         tags: device.tags 
       });
       device.save(function(err){
-         if (err) { return console.log('device saving error') }
+         if (err) { return debug.log('[jenkins-scheduler]','device saving error') }
       });
 
       client.deviceName = device.name;
       client.state = 'processing';
       client.save(function(err){
-        if (err) { return console.log('client saving error') } 
+        if (err) { return debug.log('[jenkins-scheduler]','client saving error') } 
       });
 
       // 디바이스 사용로그에 시작 시간을 기록한다.
@@ -175,7 +175,7 @@ function assignDevice(device, socket){
         WorkingSockets.push(socket);
       }
 
-      console.log("[jenkins-scheduler] %d clients in used", WorkingSockets.length);
+      debug.log('[jenkins-scheduler]', WorkingSockets.length + ' clients in used');
 
     });
   });
@@ -193,19 +193,19 @@ function onReleaseDevice(socket, message){
 
   Client.findOne({id:socket.id}, function(err, client){
 
-    if(err) { return console.log(err) }
+    if(err) { return debug.log(err) }
 
     Device.findOne({serial:serial}, function (err, device) {
-      if(err) { return console.log(err) }
+      if(err) { return debug.log(err) }
       if(!device) { return; }
 
-      console.log('[TcpUsbBridges] was closed:', device.port);
+      debug.log('[TcpUsbBridges]','was closed, port: '+ device.port);
 
       deviceLogger.record('released', device, client);
   
       device.jobid = ''; 
       device.save(function(err){
-        if (err) { return console.log('saving error') }
+        if (err) { return debug.log('[TcpUsbBridges]','saving error') }
       });
 
 
@@ -214,7 +214,7 @@ function onReleaseDevice(socket, message){
         client.jobid = '';
         client.state = 'done';
         client.save(function(err){
-          if (err) { return console.log('client saving error') } 
+          if (err) { return debug.log('[TcpUsbBridges]','client saving error') } 
         });
       }
 
@@ -237,8 +237,7 @@ function assignDevicePort(socketid, serial, port, callback){
   server.listen(port);
   server.on('listening', function () {
 
-    dlog.log('TcpUsbBridge','server started and listening tcp port: %d', port);
-    console.log('[adbmon] TcpUsbBridge server started and listening tcp port: %d', port);
+    debug.log('[TcpUsbBridges]','server started and listening tcp port: '+ port);
 
     if( TcpUsbBridges[socketid] == null ){
       
@@ -249,21 +248,21 @@ function assignDevicePort(socketid, serial, port, callback){
     }else{
 
       callback && callback(false);
-      console.log("[ERR] TcpUsbBridge is duplicated!!")
+      debug.error('[TcpUsbBridges]','TcpUsbBridge is duplicated!!');
     }
 
     
 
   });
   server.on('error', function (error) {
-    console.log("[adbmon] error " + error);
+    debug.error('[adbmon]', error);
     callback && callback(false);
   });
   server.on('connection', function () {
-    console.log("[adbmon] client connection");
+    debug.log('[adbmon]','client connection');
   });
   server.on('close', function () {
-    console.log("[adbmon] closed ");
+    debug.log('[adbmon]','closed');
   });
 
 }
@@ -271,11 +270,11 @@ function assignDevicePort(socketid, serial, port, callback){
 function printWatingQueueState(){
 
   if( waitingSocketQueue.length > 0 ){
-    console.log("\n\n[WatingQUEUE State] - %d clients waiting", waitingSocketQueue.length); 
+    console.log("[WatingQUEUE State] - %d clients waiting", waitingSocketQueue.length); 
     waitingSocketQueue.forEach(function(socket, i){
       console.log('| seq | %d | %s ', i, socket.id, socket.requestTag);
     });
-    console.log("--------------\n\n"); 
+    console.log("--------------\n"); 
   }
 }
 
@@ -323,7 +322,7 @@ exports.notify = function(message, data){
         WorkingSockets[i].disconnect();
         WorkingSockets.splice(i,1);
 
-        console.log('kickout', data);
+        debug.log('kickout', data);
         deviceLogger.record('kickout',null,data);
       }
     }

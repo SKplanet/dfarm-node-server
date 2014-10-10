@@ -6,7 +6,7 @@
 
 var express = require('express');
 var favicon = require('serve-favicon');
-var morgan = require('morgan');
+var logger = require('morgan');
 var compression = require('compression');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
@@ -32,7 +32,7 @@ module.exports = function(app) {
     app.use(favicon(path.join(config.root, 'public', 'favicon.ico'), {maxAge:'365d'}));
     app.use(express.static(path.join(config.root, 'public')));
     app.set('appPath', config.root + '/public');
-    app.use(morgan('combined'));
+    app.use(logger('combined'));
   }
 
   if ('development' === env || 'test' === env) {
@@ -40,7 +40,7 @@ module.exports = function(app) {
     app.use(express.static(path.join(config.root, '.tmp')));
     app.use(express.static(path.join(config.root, 'client')));
     app.set('appPath', 'client');
-    app.use(morgan('common'));
+    //app.use(logger('common'));
     app.use(errorHandler()); // Error handler - has to be last
   }
 };
