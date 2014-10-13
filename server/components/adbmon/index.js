@@ -103,8 +103,11 @@ function installSupportingTool(device){
 
     debug.log('[adbmon]','Installed '+apk+' on connected device('+device.id+')');
   })
+  .err(function(err) {
+    debug.error('[adbmon]','[error] maybe adb install problem.', err);
+  })
   .catch(function(err) {
-    debug.error('[adbmon]','[unexpected error catch] maybe adb problem.', err);
+    debug.error('[adbmon]','[unexpected error catch] maybe adb install problem.', err);
   })
 }
 
