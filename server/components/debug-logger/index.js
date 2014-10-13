@@ -11,13 +11,6 @@ var logger = new (winston.Logger)({
     ]
 });
 
-var moduleOptions = {
-  'TcpUsbBridge' : {
-    level : 1,
-    color : 'red'
-  }
-};
-
 exports.log = function log (name, message) {
   logger.info(name, message);
 }

@@ -95,6 +95,8 @@ function onJenDevice(socket, data) {
             socket.emit("svc_nodevice", { 
               tags: data.tag
             });
+            socket.disconnect();
+            debug.log('[jenkins-scheduler]', 'there is no device! force to disconnect...');
 
           }
 
@@ -299,7 +301,7 @@ exports.register = function(socket) {
 };
 
 /**
- * @message from: api/device/device.socket
+ * @message from: api/device/device.socket & api/client/client.socket
  */
 exports.notify = function(message, data){
 
@@ -309,6 +311,8 @@ exports.notify = function(message, data){
 
       assignDeviceFromQueue(data);
     }
+
+    //
 
   }
 
