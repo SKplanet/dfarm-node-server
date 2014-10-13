@@ -226,8 +226,6 @@ function onReleaseDevice(socket, message){
     });
 
   });
-
- 
 }
 
 function assignDevicePort(socketid, serial, port, callback){
@@ -250,10 +248,9 @@ function assignDevicePort(socketid, serial, port, callback){
       callback && callback(false);
       debug.error('[TcpUsbBridges]','TcpUsbBridge is duplicated!!');
     }
-
-    
-
   });
+
+
   server.on('error', function (error) {
     debug.error('[adbmon]', error);
     callback && callback(false);
