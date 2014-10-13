@@ -21,14 +21,17 @@ var _ = require('lodash');
 function registerEvent(socket){
 
   socket.on('jen_device', function(data){
+    debug.log('<==== JEN_DEVICE', '');
     data = JSON.parse(data||'{}');
     onJenDevice.call(null, socket, data);
   });
   socket.on('jen_out', function(){
-    onReleaseDevice.call(null, socket, 'jen_out');
+    debug.log('<==== JEN_OUT', '');
+    onReleaseDevice.call(null, socket.id, 'jen_out');
   });
   socket.on('disconnect', function(){
-    onReleaseDevice.call(null, socket, 'disconnect');
+    debug.log('<==== DISCONNECT', '');
+    onReleaseDevice.call(null, socket.id, 'disconnect');
   });
   socket.on('state', printWatingQueueState);
 }
@@ -96,8 +99,7 @@ function onJenDevice(socket, data) {
               tags: data.tag
             });
             socket.disconnect();
-            debug.log('[jenkins-scheduler]', 'there is no device! force to disconnect...');
-
+            debug.log('====> SVC_NODEVICE', '');
           }
 
         });
@@ -154,6 +156,7 @@ function assignDevice(device, socket){
         port:device.port, 
         tags: device.tags 
       });
+      debug.log('====> SVC_DEVICE', '');
       device.save(function(err){
          if (err) { return debug.log('[jenkins-scheduler]','device saving error') }
       });
@@ -183,17 +186,10 @@ function assignDevice(device, socket){
   });
 }
 
-function onReleaseDevice(socket, message){
-  var serial = 0;
+function onReleaseDevice(socketid, message){
+  var serial = removeFromTcpUsbBridges(socketid);
 
-  if( TcpUsbBridges[socket.id] ) {
-
-    serial = TcpUsbBridges[socket.id].serial;
-    TcpUsbBridges[socket.id].close();
-    TcpUsbBridges[socket.id] = null;
-  }
-
-  Client.findOne({id:socket.id}, function(err, client){
+  Client.findOne({id:socketid}, function(err, client){
 
     if(err) { return debug.log(err) }
 
@@ -221,10 +217,7 @@ function onReleaseDevice(socket, message){
       }
 
       // 워킹 소켓에서 제거한다.
-      var index = _.indexOf(WorkingSockets, socket);
-      if(index > -1){
-        WorkingSockets.splice(index, 1);  
-      }
+      removeFromWorkingSockets(socketid);
     });
 
   });
@@ -277,21 +270,48 @@ function printWatingQueueState(){
   }
 }
 
-exports.remove = function(socket){
+function removeFromTcpUsbBridges(socketid){
 
+  var serial = 0;
+  if( TcpUsbBridges[socketid] ) {
+    serial = TcpUsbBridges[socketid].serial;
+    TcpUsbBridges[socketid].close();
+    TcpUsbBridges[socketid] = null;
+    debug.log('[TcpUsbBridges]', serial + ' device\'s TcpUsbBridge is disconnected');
+  }
+  return serial;
+}
+
+function removeFromWorkingSockets(socketid){
   for(var i=0; i<WorkingSockets.length; ++i){
-    if(WorkingSockets[i].id === socket.id){
+    if(WorkingSockets[i].id === socketid){
       WorkingSockets[i].disconnect();
       WorkingSockets.splice(i,1);
+      debug.log('[jenkins-scheduler]', socketid + ' socket is spliced from Working Sockets');
+      return 1;
     }
   }
+  return 0;
+}
 
-  for(i=0; i<waitingSocketQueue.length; ++i){
-    if(waitingSocketQueue[i].id === socket.id){
+function removeFromWaitingSockets(socketid){
+  for(var i=0; i<waitingSocketQueue.length; ++i){
+    if(waitingSocketQueue[i].id === socketid){
       waitingSocketQueue[i].disconnect();
       waitingSocketQueue.splice(i,1);
+      debug.log('[jenkins-scheduler]', socketid + ' socket is spliced from Waiting Sockets');
+      return 1;
     }
   }
+  return 0;
+}
+
+exports.remove = function(socket){
+
+  var socketid = socket.id;
+
+  removeFromWorkingSockets(socketid);
+  removeFromWaitingSockets(socketid);
 };
 
 
@@ -312,20 +332,37 @@ exports.notify = function(message, data){
       assignDeviceFromQueue(data);
     }
 
-    //
+    if ( data.isConnected === false ){
+
+      debug.log('[adb]', 'device is disconnected..');
+
+      Client.findOne({jobid: data.jobid}, function(err, client){
+
+        if(!client){ return; }
+
+        var socketid = client.id;
+        removeFromTcpUsbBridges(socketid);
+        removeFromWorkingSockets(socketid);
+        removeFromWaitingSockets(socketid);
+
+        Device.findOne({jobid: data.jobid}, function(err, device){
+          if(!device){ return; }
+          device.jobid = ''
+          device.save();
+        })
+
+      });
+
+    }
 
   }
 
   if(message === 'client:remove') {
 
-    for(var i=0; i<WorkingSockets.length; ++i){
-      if(WorkingSockets[i].id === data.id){
-        WorkingSockets[i].disconnect();
-        WorkingSockets.splice(i,1);
-
-        debug.log('[client]', 'kickout');
-        deviceLogger.record('kickout',null,data);
-      }
+    if( removeFromWorkingSockets(data.id) ){
+      debug.log('[client]', 'kickout');
+      deviceLogger.record('kickout',null,data);
     }
+
   }
 }
