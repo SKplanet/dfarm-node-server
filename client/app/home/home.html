@@ -9,11 +9,9 @@
     <ul class="nav nav-pills">
       <li ng-repeat-start="device in devices">
         <img src="{{device.photoUrl}}" />
-        <div>
-          <span><a href="/devices/{{device._id}}">{{device.name}}</a></span>
-          <label class="label state" ng-class="{'label-warning': device.jobid, 'label-success': !device.jobid}">
-            <i ng-class="{'fa fa-check': !!device.jobid}"></i>{{device.jobid ? "in use" : "available"}}
-          </label>
+        <div><a href="/devices/{{device._id}}">{{device.name}}</a></div>
+        <div class="label state" ng-class="{'label-warning': device.jobid, 'label-success': !device.jobid}">
+          <i ng-class="{'fa fa-check': !!device.jobid}"></i>{{device.jobid ? "in use" : "available"}}
         </div>
       </li>
       <div ng-if="false" ng-repeat-end></div>
