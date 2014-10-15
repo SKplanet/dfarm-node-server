@@ -1,8 +1,12 @@
 <section class="device-detail">
   <div class="float-box photo">
     <img src='{{device.photoUrl}}'>
-    <strong><i class="fa fa-circle status" ng-class="{'connected':device.isConnected, 'used':device.jobid}"></i> {{device.name}}</strong>
-    <button ng-click='openPhotoUrlEditor()'>단말 사진 수정</button>
+    <div>
+      <strong>
+        <i class="fa fa-circle status" ng-class="{'connected':device.isConnected, 'used':device.jobid}"></i> {{device.name}}
+      </strong>
+      <button ng-click='openPhotoUrlEditor()'>단말 사진 수정</button>
+    </div>
   </div>
   <div class="float-box deviceInfo">
     <h4>단말 정보</h4>
