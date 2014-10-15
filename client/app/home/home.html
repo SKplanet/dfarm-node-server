@@ -10,7 +10,7 @@
       <li ng-repeat-start="device in devices">
         <img src="{{device.photoUrl}}" />
         <div>
-          <a href="/devices/{{device._id}}">{{device.name}}</a>
+          <span><a href="/devices/{{device._id}}">{{device.name}}</a></span>
           <label class="label state" ng-class="{'label-warning': device.jobid, 'label-success': !device.jobid}">
             <i ng-class="{'fa fa-check': !!device.jobid}"></i>{{device.jobid ? "in use" : "available"}}
           </label>
