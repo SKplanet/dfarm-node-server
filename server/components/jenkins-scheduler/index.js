@@ -238,7 +238,7 @@ function onReleaseDevice(socketid, message){
       }
 
       // 워킹 소켓에서 제거한다.
-      removeFromWorkingSockets(socketid);
+      removeFromWorkingSockets(socketid, message);
     });
 
   });
@@ -303,9 +303,13 @@ function removeFromTcpUsbBridges(socketid){
   return serial;
 }
 
-function removeFromWorkingSockets(socketid){
+function removeFromWorkingSockets(socketid, isTimeout){
   for(var i=0; i<WorkingSockets.length; ++i){
     if(WorkingSockets[i].id === socketid){
+
+      if(isTimeout){
+        WorkingSockets[i].emit('svc_timeout', "10 minutes timeout, you can't occupy a device more than 10 minutes");  
+      }
       WorkingSockets[i].disconnect();
       WorkingSockets.splice(i,1);
       debug.log('[jenkins-scheduler]', socketid + ' socket is spliced from Working Sockets');

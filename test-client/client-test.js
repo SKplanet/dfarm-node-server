@@ -20,6 +20,13 @@ socket.on('connect', function(){
 
   });
 
+  socket.on('svc_timeout', function(data){
+
+    console.log("svc_timeout", data);
+   // process.exit();
+
+  });
+
   socket.on('disconnect', function(){
    // socket.removeListener('svc_device');
    console.log("disconnect inside.. so removed listener");
