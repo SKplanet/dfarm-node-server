@@ -139,6 +139,22 @@ function assignDeviceFromQueue(device){
   printWatingQueueState();
 }
 
+
+var TimeoutManager = {}
+function addTimeout (socketid){
+
+  TimeoutManager[socketid] = setTimeout(function(){
+
+    debug.log('[jenkins-scheduler]', 'Timeout 10 mins... ' + socketid);
+
+    clearTimeout(TimeoutManager[socketid]);
+    TimeoutManager[socketid] = null;
+    onReleaseDevice(socketid, 'timeout');
+
+  }, 10 * 60 * 1000);
+
+}
+
 function assignDevice(device, socket){
 
   assignDevicePort(socket.id, device.serial, device.port, function(success){
@@ -161,6 +177,9 @@ function assignDevice(device, socket){
       device.save(function(err){
          if (err) { return debug.log('[jenkins-scheduler]','device saving error') }
       });
+
+      // 타이머가 추가
+      addTimeout(socket.id);
 
       client.deviceName = device.name;
       client.state = 'processing';
