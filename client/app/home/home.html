@@ -24,15 +24,11 @@
       <ul class="list-group">
         <li class="list-group-item" ng-repeat="client in clients | filter:findWaitingClients">
           <span>{{client.dispConnDate}}</span>
-          <span> | {{client.type}} | </span>
-          <span>{{client.ip}}</span>
-          <span>| {{client.deviceName}}
-            <span class="label state label-success"><i class="fa fa-check"> {{client.state}}</i></span>
+          <span class="label state label-success"><i class="fa fa-check"> {{client.state}}</i></span>
             
-            <a href="{{client.jobid}}">{{client.requestTag}}</a>
+          <a href="{{client.jobid}}">{{client.requestTag}}</a>
 
-            <button ng-if="(client.state==='processing') && (user.role === 'admin')" type="button" class="close" ng-click="deleteClient(client)">&times;</button>
-          </span>
+          <button ng-show="isAdmin" type="button" class="close" ng-click="deleteClient(client)">&times;</button>
         </li>
       </ul>
     </div>

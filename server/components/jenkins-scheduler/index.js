@@ -379,16 +379,13 @@ exports.notify = function(message, data){
         })
 
       });
-
     }
-
   }
 
   if(message === 'client:remove') {
 
-    if( removeFromWorkingSockets(data.id) ){
+    if( removeFromWaitingSockets(data.id) ) {
       debug.log('[client]', 'kickout');
-      deviceLogger.record('kickout',null,data);
     }
 
   }

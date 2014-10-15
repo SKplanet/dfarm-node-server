@@ -24,7 +24,7 @@
     };
 
     $scope.deleteDevice = function(device) {
-      Client.delete(device._id);
+      Device.delete(device._id);
     };
 
     $scope.deleteClient = function(client){
