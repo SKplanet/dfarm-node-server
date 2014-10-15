@@ -18,18 +18,50 @@
     background: #4393B9;
 }
 
-#main {
-
-  .label {
-    font-weight: normal;
+.home {
+  .device-queue {
+    margin: 10px 0;
+    text-align: center;
+    img {
+      width: 100px;
+      height: 100px;
+    }
   }
 
-  .state i{
-    font-style: normal;
-    font-size: 9px;
+  .client-queue {
+    background-color: #e1e1e1;
+    margin: 0px;
+    padding: 10px;
+
+    p {
+      position: relative;
+      width: 200px;
+      margin: 0 auto;
+      color: #aaa;
+      font-weight: bold;
+    }
+
+    .label {
+      font-weight: normal;
+    }
+
+    .state i{
+      font-style: normal;
+      font-size: 9px;
+    }
+
+    ul li {
+      &.admin {
+        width: 190px;
+      }
+
+
+      width: 170px;
+      float: left;
+      margin-right: 10px;
+    }
+
   }
 
-  ul li {
-    margin-right: 10px;
-  }
+  
 }

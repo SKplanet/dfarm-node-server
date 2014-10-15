@@ -15,7 +15,16 @@
     Client.get().success(function(clients){
 
       $scope.clients = clients;
-      socket.syncUpdates('client', $scope.clients);
+      socket.syncUpdates('client', $scope.clients, function(message, data){
+      
+        for(var i=0, len = $scope.clients.length; i < len; ++i){
+
+          if( $scope.clients[i].state !== 'waiting' ){
+            $scope.clients.splice(i, 1);
+          }
+        }
+        
+      });
       
     })
     

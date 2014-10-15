@@ -4,34 +4,38 @@
     <p class="lead">Share your device with your co-workers.</p>
   </div>
 </header>
-<div id="main" class="container">
-  <div class="row">
-    <div class="col-lg-12">
-      <h1 class="page-header">Available Devices</h1>
-      <ul class="nav nav-pills">
-        <li ng-repeat-start="device in devices">
+<section class="home">
+  <div class="row device-queue">
+    <ul class="nav nav-pills">
+      <li ng-repeat-start="device in devices">
+        <img src="{{device.photoUrl}}" />
+        <div>
           <span><a href="/devices/{{device._id}}">{{device.name}}</a></span>
-          <span class="label state" ng-class="{'label-warning': device.jobid, 'label-success': !device.jobid}"><i ng-class="{'fa fa-check': !!device.jobid}"></i>{{device.jobid ? "in use" : "available"}}</span>
-        </li>
-        <div ng-if="false" ng-repeat-end></div>
-      </ul>
-    </div>
+          <span class="label state" ng-class="{'label-warning': device.jobid, 'label-success': !device.jobid}">
+            <i ng-class="{'fa fa-check': !!device.jobid}"></i>{{device.jobid ? "in use" : "available"}}
+          </span>
+        </div>
+      </li>
+      <div ng-if="false" ng-repeat-end></div>
+    </ul>
   </div>
 
-  <div class="row">
-    <div class="col-lg-12">
-      <h1 class="page-header">Client Queue</h1>
-      <ul class="list-group">
-        <li class="list-group-item" ng-repeat="client in clients | filter:findWaitingClients">
-          <span>{{client.dispConnDate}}</span>
-          <span class="label state label-success"><i class="fa fa-check"> {{client.state}}</i></span>
-            
-          <a href="{{client.jobid}}">{{client.requestTag}}</a>
+  <hr/>
+  <div class="row client-queue">
 
-          <button ng-show="isAdmin" type="button" class="close" ng-click="deleteClient(client)">&times;</button>
-        </li>
-      </ul>
-    </div>
+    <p ng-hide="clients.length">There is no waiting client.</p>
+    <ul ng-show="clients.length" class="list-group">
+      <li class="list-group-item" ng-class="{'admin':isAdmin}" ng-repeat="client in clients | filter:findWaitingClients">
+        
+        <span class="label state label-success"><i class="fa fa-check"> {{client.state}}</i></span>
+
+        <button ng-show="isAdmin" type="button" class="close" ng-click="deleteClient(client)">&times;</button>
+          
+        <a href="{{client.jobid}}">{{client.requestTag}}</a>
+        <span>{{client.dispConnDate}}</span>
+        
+      </li>
+    </ul>
   </div>
-</div>
+</section>
 
