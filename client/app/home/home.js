@@ -21,9 +21,10 @@
 
           if( $scope.clients[i].state !== 'waiting' ){
             $scope.clients.splice(i, 1);
+            i--;
           }
         }
-        
+
       });
       
     })
