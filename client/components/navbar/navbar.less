@@ -3,9 +3,15 @@
 @media (min-width: 768px) { 
 
   .navbar-default.navbar {
+    .navbar-right{
+      .active, li:hover  {
+        border: none;
+      }
+    }
+
     .active {
       font-weight: bold;
-      border-bottom: 4px solid #546;
+      border-bottom: 4px solid #000;
 
       > a {
         background-color: transparent;
@@ -14,10 +20,11 @@
       > a:hover{
         background-color: transparent;
       }
+
     }
 
     li:hover {
-      border-bottom: 4px solid #982;
+      border-bottom: 4px solid #777;
       > a {
         background-color: transparent;
         padding-bottom: 11px;

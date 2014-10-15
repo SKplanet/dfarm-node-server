@@ -45,10 +45,17 @@ angular.module('devicefarmApp', [
 
   .run(function ($rootScope, $state, $location, Auth) {
     $rootScope.$state = $state;
+    $rootScope.isCollapsed = true;
 
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
       Auth.isLoggedInAsync(function(loggedIn) {
+
+        if(loggedIn){
+          $rootScope.isLoggedIn = Auth.isLoggedIn();
+          $rootScope.isAdmin = Auth.isAdmin();
+        }
+
         if (next.authenticate && !loggedIn) {
           $location.path('/login');
         }

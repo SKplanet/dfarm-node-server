@@ -10,14 +10,11 @@ angular.module('devicefarmApp')
       'link' : '/devices'
     }];
 
-    $scope.isCollapsed = true;
-    $scope.isLoggedIn = Auth.isLoggedIn;
-    $scope.isAdmin = Auth.isAdmin;
-    $rootScope.user = Auth.getCurrentUser();
-
     $scope.logout = function() {
       Auth.logout();
       $location.path('/login');
+      $rootScope.isLoggedIn = false;
+      $rootScope.isAdmin = false;
     };
 
     $scope.isActive = function(route) {

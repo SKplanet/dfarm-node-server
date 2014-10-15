@@ -88,6 +88,9 @@
     };
 
     $scope.editManagerName = function(){
+
+      if( !$scope.isAdmin ) {return;}
+
       $scope.isEditManagerName = true;
       $timeout(function(){
         angular.element("#editName")[0].focus();
@@ -95,6 +98,8 @@
     }
 
     $scope.editManagerTeam = function(){
+      if( !$scope.isAdmin ) {return;}
+      
       $scope.isEditManagerTeam = true;
       $timeout(function(){
         angular.element("#editTeam")[0].focus();
