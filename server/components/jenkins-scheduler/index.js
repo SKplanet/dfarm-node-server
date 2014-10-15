@@ -150,6 +150,7 @@ function assignDevice(device, socket){
       if(!client){ return; }
 
       device.jobid = client.jobid;
+      device.connectedAt = new Date();
       socket.emit("svc_device", { 
         ip: ip.address(), 
         url: "http://"+ ip.address() + ":9000/devices/" + device._id,
@@ -202,6 +203,7 @@ function onReleaseDevice(socketid, message){
       deviceLogger.record('released', device, client);
   
       device.jobid = ''; 
+      device.connectedAt = null;
       device.save(function(err){
         if (err) { return debug.log('[TcpUsbBridges]','saving error') }
       });
@@ -310,6 +312,7 @@ exports.remove = function(socket){
 
   var socketid = socket.id;
 
+  removeFromTcpUsbBridges(socketid);
   removeFromWorkingSockets(socketid);
   removeFromWaitingSockets(socketid);
 };
@@ -347,7 +350,8 @@ exports.notify = function(message, data){
 
         Device.findOne({jobid: data.jobid}, function(err, device){
           if(!device){ return; }
-          device.jobid = ''
+          device.jobid = '';
+          device.connectedAt = null;
           device.save();
         })
 

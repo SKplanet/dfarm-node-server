@@ -1,13 +1,13 @@
-<div class="container device-list">
+<section class="device-list">
   <div ng-repeat="device in devices">
     <div class="float-box photo clickable" ng-click="$state.go('device-detail', {id: device._id})">
         <img src='{{device.photoUrl}}'>
         <div class="deviceInfo">
-          <h4>{{device.name}}</h4>
+          <h4><i class="fa fa-circle status" ng-class="{'connected':device.isConnected, 'used':device.jobid}"></i> {{device.name}}</h4>
           <ul class="tags nav nav-stacked">
             <li ng-repeat="tag in device.tags">{{tag}}</li>
           </ul>
         </div>
     </div>
   </div>
-</div>
+</section>

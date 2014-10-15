@@ -5,9 +5,11 @@
     .module('devicefarmApp')
     .controller('DeviceDetailCtrl', DeviceDetailCtrl);
 
-  function DeviceDetailCtrl($scope, $location, $modal, $log, $timeout, Device, DeviceLog, Client, socket) {
 
-    var id = $location.path().replace('/devices/','');
+  function DeviceDetailCtrl($scope, $location, $modal, $log, $timeout, Device, DeviceLog, Client, socket, $interval) {
+
+    var id = $location.path().replace('/devices/',''), timer = null;
+    var _this = this;
 
     $scope.isEditManagerName = false;
     $scope.isEditManagerTeam = false;
@@ -18,10 +20,14 @@
 
         $scope.device = device;
 
+        _this.resetTimer(device.connectedAt);
+
         socket.syncUpdates('device', [], function(message, data){
 
           if( $scope.device._id === data._id ){
-            $scope.device = data;  
+            $scope.device = data;
+            _this.resetTimer(data.connectedAt);
+            
           }
           
         });
@@ -40,6 +46,26 @@
           });
       });
     
+
+    this.resetTimer = function(dateAt){
+
+      if(timer){
+        $interval.cancel(timer);
+        timer = null;
+      }
+
+      if( dateAt ){
+
+        $scope.spendTime = moment().preciseDiff( dateAt );
+
+        timer = $interval(function(){
+
+          $scope.spendTime = moment().preciseDiff( dateAt );
+
+        }, 1000);
+      }
+
+    }
 
     $scope.$on('$destroy', function () {
       socket.unsyncUpdates('devicelog');

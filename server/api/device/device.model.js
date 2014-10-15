@@ -8,6 +8,7 @@ var DeviceSchema = new Schema({
   port: Number,
   serial: {type:String, unique: true},
   jobid: {type:String, default: ''},
+  connectedAt : {type: Date},
   isConnected : {type: Boolean, default: false},
   tags: [String],
   photoUrl: String,
