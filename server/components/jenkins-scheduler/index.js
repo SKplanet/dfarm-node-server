@@ -151,7 +151,7 @@ function addTimeout (socketid){
     TimeoutManager[socketid] = null;
     onReleaseDevice(socketid, 'timeout');
 
-  }, 10 * 60 * 1000);
+  }, 20 * 60 * 1000);
 
 }
 
