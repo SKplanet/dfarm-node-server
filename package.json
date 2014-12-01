@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "server/app.js",
   "dependencies": {
-    "adbkit": "^2.1.2",
+    "adbkit": "2.0.15",
     "body-parser": "~1.9.0",
     "composable-middleware": "^0.3.0",
     "compression": "~1.1.0",
