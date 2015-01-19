@@ -10,6 +10,15 @@ var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config/environment');
 var adbmon = require('./components/adbmon');
+var waitForMongo = require('wait-for-mongo');
+
+waitForMongo("mongodb://localhost/comet", {timeout: 1000 * 60* 2}, function(err) {
+  if(err) {
+    console.log('timeout exceeded');
+  } else {
+    console.log('mongodb comes online');
+  }
+});
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
