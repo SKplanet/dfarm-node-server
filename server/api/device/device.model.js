@@ -16,6 +16,6 @@ var DeviceSchema = new Schema({
     name: {type:String, default:'이름을 지정해주세요.'},
     team: {type:String, default:'팀을 지정해주세요.'}
   }
-});
+}, {'versionKey': false});
 
 module.exports = mongoose.model('Device', DeviceSchema);
