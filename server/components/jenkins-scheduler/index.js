@@ -145,7 +145,7 @@ function addTimeout (socketid){
 
   TimeoutManager[socketid] = setTimeout(function(){
 
-    debug.log('[jenkins-scheduler]', 'Timeout 10 mins... ' + socketid);
+    debug.log('[jenkins-scheduler]', 'Timeout 20 mins... ' + socketid);
 
     clearTimeout(TimeoutManager[socketid]);
     TimeoutManager[socketid] = null;

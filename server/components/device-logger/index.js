@@ -41,10 +41,18 @@ exports.record = function(state, device, client){
       .sort('-date')
       .exec(function(err, log){
         var diff = moment().diff(log.date);
+        var duration = moment.duration({'ms': diff});
+        var sTime = ""
+
+        if ( duration.minutes() > 0) {
+          sTime = duration.minutes() + "min ";
+        }
+
+        sTime += duration.seconds() +"sec"
 
         DeviceLog.create({
           deviceId: device.serial,
-          message: ' time spend ==> ' + diff / 1000 + 's',
+          message: ', total used time: ==> ' + sTime,
           state: state
         });
 
