@@ -145,13 +145,13 @@ function addTimeout (socketid){
 
   TimeoutManager[socketid] = setTimeout(function(){
 
-    debug.log('[jenkins-scheduler]', 'Timeout 20 mins... ' + socketid);
+    debug.log('[jenkins-scheduler]', 'Timeout 120 mins... ' + socketid);
 
     clearTimeout(TimeoutManager[socketid]);
     TimeoutManager[socketid] = null;
     onReleaseDevice(socketid, 'timeout');
 
-  }, 20 * 60 * 1000);
+  }, 120 * 60 * 1000);
 
 }
 
