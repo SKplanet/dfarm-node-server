@@ -62,7 +62,7 @@ function startTcpUsbBridge(serial) {
             device.isConnected = true;
             device.save();
 
-            debug.log("[adbmon]", device.serial + " device was initialized");  
+            debug.log("[adbmon]", device.name + "(" + device.serial + ") device was initialized");  
 
           }else{
 

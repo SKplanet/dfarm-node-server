@@ -21,16 +21,16 @@ var _ = require('lodash');
 function registerEvent(socket){
 
   socket.on('jen_device', function(data){
-    debug.log('<==== JEN_DEVICE', '');
+    //debug.log('<==== JEN_DEVICE', '');
     data = JSON.parse(data||'{}');
     onJenDevice.call(null, socket, data);
   });
   socket.on('jen_out', function(){
-    debug.log('<==== JEN_OUT', '');
+    //debug.log('<==== JEN_OUT', '');
     onReleaseDevice.call(null, socket.id, 'jen_out');
   });
   socket.on('disconnect', function(){
-    debug.log('<==== DISCONNECT', '');
+    //debug.log('<==== DISCONNECT', '');
     onReleaseDevice.call(null, socket.id, 'disconnect');
   });
   socket.on('state', printWatingQueueState);
@@ -99,7 +99,7 @@ function onJenDevice(socket, data) {
               tags: data.tag
             });
             socket.disconnect();
-            debug.log('====> SVC_NODEVICE', '');
+            //debug.log('====> SVC_NODEVICE', '');
           }
 
         });
@@ -173,7 +173,7 @@ function assignDevice(device, socket){
         port:device.port, 
         tags: device.tags 
       });
-      debug.log('====> SVC_DEVICE', '');
+      //debug.log('====> SVC_DEVICE', '');
       device.save(function(err){
          if (err) { return debug.log('[jenkins-scheduler]','device saving error') }
       });
@@ -251,7 +251,7 @@ function assignDevicePort(socketid, serial, port, callback){
   server.listen(port);
   server.on('listening', function () {
 
-    debug.log('[TcpUsbBridges]','server started and listening tcp port: '+ port);
+    // debug.log('[TcpUsbBridges]','server started and listening tcp port: '+ port);
 
     if( TcpUsbBridges[socketid] == null ){
       
@@ -360,7 +360,7 @@ exports.notify = function(message, data){
 
     if ( data.isConnected === false ){
 
-      debug.log('[adb]', 'device is disconnected..');
+      //debug.log('[adb]', 'device is disconnected..');
 
       Client.findOne({jobid: data.jobid}, function(err, client){
 

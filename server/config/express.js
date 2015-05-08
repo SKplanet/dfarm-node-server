@@ -15,6 +15,7 @@ var errorHandler = require('errorhandler');
 var path = require('path');
 var config = require('./environment');
 var passport = require('passport');
+var debug = require('../components/debug-logger');
 
 module.exports = function(app) {
   var env = app.get('env');
@@ -42,5 +43,9 @@ module.exports = function(app) {
     app.set('appPath', path.join(config.root, 'client'));
     //app.use(logger('common'));
     app.use(errorHandler()); // Error handler - has to be last
+    process.on('uncaughtException', function (er) {
+      debug.error(er.stack)
+      process.exit(1)
+    })
   }
 };
