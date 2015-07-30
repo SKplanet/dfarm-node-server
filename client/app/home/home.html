@@ -11,7 +11,7 @@
         <img src="{{device.photoUrl}}" />
         <div><a href="/devices/{{device._id}}">{{device.name}}</a></div>
         <div class="label state" ng-class="{'label-warning': device.jobid, 'label-success': !device.jobid}">
-          <i ng-class="{'fa fa-check': !!device.jobid}"></i>{{device.jobid ? "in use" : "available"}}
+          <i ng-class="{'fa fa-check': !!device.jobid}"></i>{{device.jobid === 'monopoly' ? "occupied" : device.jobid ? "in use" : "available"}}
         </div>
       </li>
       <div ng-if="false" ng-repeat-end></div>
