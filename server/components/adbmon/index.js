@@ -58,7 +58,10 @@ function startTcpUsbBridge(serial) {
         Device.findOne({serial: serial}, function(err, device){
 
           if(device){
-            device.jobid = "";
+
+            if(device.jobid !== 'monopoly'){
+               device.jobid = "";             
+            }
             device.isConnected = true;
             device.save();
 

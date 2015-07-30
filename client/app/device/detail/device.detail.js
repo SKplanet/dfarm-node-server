@@ -159,8 +159,6 @@
 
     $scope.toggleOccupation = function(){
       
-
-      console.log( $scope.device.monopoly);
       $scope.device.monopoly = $scope.device.monopoly || {
         isOccupied: false,
         note: '제외 사유를 남겨주세요!' 
@@ -177,7 +175,7 @@
       Device
       .save(id, $scope.device)
       .success(function(){
-        console.log("SAVED");
+        //console.log("SAVED");
       });
 
     };

@@ -14,7 +14,7 @@
       <li ng-repeat="tag in device.tags">{{tag}}</li>
     </ul>
     <button ng-show="isAdmin" ng-click='openTagEditor()'>태그 수정</button>
-    <button ng-show="isAdmin" ng-if="device.monopoly.isOccupied" ng-click='toggleOccupation()'>다시 할당</button>
+    <button ng-show="isAdmin" ng-if="device.monopoly.isOccupied" ng-click='toggleOccupation()'>제외 취소</button>
     <button ng-show="isAdmin" ng-if="!device.monopoly.isOccupied" ng-click='toggleOccupation()'>할당 제외</button>
 
     <div ng-if="device.monopoly.isOccupied" class="float-box occupationInfo">
@@ -35,7 +35,7 @@
     <input id="editTeam" ng-class="{'hide': !isEditManagerTeam }" ng-model="device.manager.team" ng-keypress="keypress($event)" ng-blur="isEditManagerTeam=false"/>
   </div>
 
-  <div class="float-box control-box" ng-if="!device.monopoly.isOccupied" ng-show="device.jobid">
+  <div class="float-box control-box" ng-if="!device.monopoly.isOccupied"ng-show="device.jobid">
     <div class="input-group">
       <h4>사용중인 Jenkins Job</h4>
       <div>{{spendTime}}</div>
