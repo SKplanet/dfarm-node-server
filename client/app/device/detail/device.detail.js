@@ -83,6 +83,7 @@
         .success(function(){
           $scope.isEditManagerName = false;
           $scope.isEditManagerTeam = false;
+          $scope.isOccupied = false;
         });
       }
     };
@@ -105,7 +106,17 @@
         angular.element("#editTeam")[0].focus();
       }, 100);
       
-    }
+    };
+
+    $scope.editDeviceOccupy = function(){
+      if( !$scope.isAdmin ) {return;}
+      
+      $scope.isOccupied = true;
+      $timeout(function(){
+        angular.element("#editOccupation")[0].focus();
+      }, 100);
+      
+    };
 
     $scope.openPhotoUrlEditor = function(size){
 
@@ -144,6 +155,31 @@
       }, function () {
         $log.info('Modal dismissed at: ' + new Date());
       });
+    };
+
+    $scope.toggleOccupation = function(){
+      
+
+      console.log( $scope.device.monopoly);
+      $scope.device.monopoly = $scope.device.monopoly || {
+        isOccupied: false,
+        note: '제외 사유를 남겨주세요!' 
+      };
+
+      $scope.device.monopoly.isOccupied = !$scope.device.monopoly.isOccupied;
+
+      if($scope.device.monopoly.isOccupied){
+        $scope.device.jobid = 'monopoly';
+      }else{
+        $scope.device.jobid = null;
+      }
+      
+      Device
+      .save(id, $scope.device)
+      .success(function(){
+        console.log("SAVED");
+      });
+
     };
 
     $scope.openTagEditor = function(size){

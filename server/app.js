@@ -12,15 +12,6 @@ var config = require('./config/environment');
 var adbmon = require('./components/adbmon');
 var waitForMongo = require('wait-for-mongo');
 
-waitForMongo("mongodb://localhost/comet", {timeout: 1000 * 60* 2}, function(err) {
-  if(err) {
-    console.log('timeout exceeded');
-  } else {
-    console.log('mongodb comes online');
-    run();
-  }
-});
-
 function run() {
   // Connect to database
   mongoose.connect(config.mongo.uri, config.mongo.options);
@@ -36,14 +27,7 @@ function run() {
     'browser client etag': true,
     'browser client minification': true,
     'log level': 1,
-    'transports':[
-      'websocket'
-    , 'flashsocket'
-    , 'htmlfile'
-    , 'xhr-polling'
-    , 'jsonp-polling'
-    ]
-
+    'transports':['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']
   }).listen(server);
 
   require('./config/socketio')(socketio);
@@ -64,3 +48,11 @@ function run() {
   exports = module.exports = app;
 }
 
+waitForMongo("mongodb://localhost/comet", {timeout: 1000 * 60* 2}, function(err) {
+  if(err) {
+    console.log('timeout exceeded');
+  } else {
+    console.log('mongodb comes online');
+    run();
+  }
+});

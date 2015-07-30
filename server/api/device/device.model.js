@@ -15,6 +15,10 @@ var DeviceSchema = new Schema({
   manager: {
     name: {type:String, default:'이름을 지정해주세요.'},
     team: {type:String, default:'팀을 지정해주세요.'}
+  },
+  monopoly: {
+    isOccupied: false,
+    note: ''
   }
 }, {'versionKey': false});
 
