@@ -3,9 +3,8 @@ Test Device Farm 서버는 Jenkins Plugin인이 요청한 단말 정보를 반�
 
 
 # 개발환경 설정
-저장소: http://stash.skplanet.com/projects/SQE/repos/devicefarm-node-server
 
-    ```bash
+    ```
     $> git clone 저장소
     $> cd devicefarm
     $> npm install
@@ -28,7 +27,7 @@ ADBKit이 설치되어 있는 node_modules 폴더에 들어가서 socket.js 파�
           throw new Socket.AuthError("Rejected by user-defined handler");
         });
       };
-
+    
     // TO BE
     })(this)).then((function(_this) {
       return function(key) {
@@ -39,23 +38,22 @@ ADBKit이 설치되어 있는 node_modules 폴더에 들어가서 socket.js 파�
 # 배포방법
 현재 DFarm은 스탑워치와 같은 물리 리눅서 서버에서 돌아가고 있다. 따라서 배포하려면 물리서버에 접근해야한다. 
 배포는 간단하다 git 으로 최신 내용을 업데이트 받고 필요하다면 노드모듈을 설치한다. 
-    ```
+    
     $> git pull
     $> npm install
-    ```
-
+    
 그리고 Forever를 실행한다. 
 
 ## Forever 실행 스크립트
-    ```
+
     $ /app/devicefarm-node-server> ./restart.sh
-    ```
+    
 [참고 문서](http://coffeenix.net/doc/shell/introbashscript.htm)
 
 
 ## FAQ
 Q1. **npm install** 명령을 실행했는데 devDependencies 모듈이 설치되지 않습니다. 
+
 > NODE_ENV 환경이 production일 경우 devDependencies 모듈이 설치되지 않습니다. 따라서 아래와 같이 모듈설치시 아래와 같이 환경을 변경후 실행하세요. 
-    ```
+
     NODE_EVN=development npm install
-    ```
