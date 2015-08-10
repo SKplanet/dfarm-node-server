@@ -4,20 +4,18 @@ Test Device Farm 서버는 Jenkins Plugin인이 요청한 단말 정보를 반�
 
 # 개발환경 설정
 
-    ```
     $> git clone 저장소
     $> cd devicefarm
     $> npm install
     $> bower install
     $> grunt serve
-    ```
+    
 서버를 실행 시키기전에 반드시 MongoDB 인스턴스가 실행되어 있어야한다.
 
 ## ADBKit 수정
 ADBKit의 인증 문제를 해결하기 위해서는 간단한 코드 수정이 필요하다. 
 ADBKit이 설치되어 있는 node_modules 폴더에 들어가서 socket.js 파일을 찾아 205번 라인 근처에서 아래와 같이 수정한다. 
 
-    ```
     // node_modules/adbkit/lib/adb/tcpusb/socket.js
     // AS IS
     
@@ -33,7 +31,6 @@ ADBKit이 설치되어 있는 node_modules 폴더에 들어가서 socket.js 파�
       return function(key) {
         return true;
       };
-    ```
 
 # 배포방법
 현재 DFarm은 스탑워치와 같은 물리 리눅서 서버에서 돌아가고 있다. 따라서 배포하려면 물리서버에 접근해야한다. 
