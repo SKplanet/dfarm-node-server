@@ -12,25 +12,9 @@ Test Device Farm 서버는 Jenkins Plugin인이 요청한 단말 정보를 반�
     
 서버를 실행 시키기전에 반드시 MongoDB 인스턴스가 실행되어 있어야한다.
 
-## ADBKit 수정
-ADBKit의 인증 문제를 해결하기 위해서는 간단한 코드 수정이 필요하다. 
-ADBKit이 설치되어 있는 node_modules 폴더에 들어가서 socket.js 파일을 찾아 205번 라인 근처에서 아래와 같이 수정한다. 
+## ADBKit 의존성
+ADBkit은 현재 2.3.x 버전까지 나와 있지만 2.1 버전부터 추가된 인증 절차때문에 디팜은 adbkit 2.0.x 버전만 사용이 가능하다. 참고로 2.0 버전의 최신은 2.0.17 이다.
 
-    // node_modules/adbkit/lib/adb/tcpusb/socket.js
-    // AS IS
-    
-    })(this)).then((function(_this) {
-      return function(key) {
-        return _this.options.auth(key)["catch"](function(err) {
-          throw new Socket.AuthError("Rejected by user-defined handler");
-        });
-      };
-    
-    // TO BE
-    })(this)).then((function(_this) {
-      return function(key) {
-        return true;
-      };
 
 # 배포방법
 현재 DFarm은 스탑워치와 같은 물리 리눅서 서버에서 돌아가고 있다. 따라서 배포하려면 물리서버에 접근해야한다. 
